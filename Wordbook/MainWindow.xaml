@@ -1,0 +1,18 @@
+﻿<controls:MetroWindow x:Class="Wordbook.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:controller="clr-namespace:Wordbook.Controllers"
+    xmlns:services="clr-namespace:Wordbook.Services"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:views="clr-namespace:Wordbook.Views"
+    Title="Wordbook" 
+    ShowIconOnTitleBar="True"
+    Height="472"
+    Width="326"
+    DataContext="{x:Static controller:ControllerLocator.MainController}">
+    <controls:MetroWindow.Triggers>
+        
+    </controls:MetroWindow.Triggers>
+    <controls:TransitioningContentControl Name="PageContent"/>
+</controls:MetroWindow>
