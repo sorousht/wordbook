@@ -14,7 +14,7 @@ namespace Wordbook.Data
                         word.Element("Text").Value,
                         word.Attribute("Type").Value,
                         word.Element("Definition").Value,
-                        word.Element("Registered").Value));
+                        word.Attribute("Registered").Value));
         }
 
         public static Word AsWord(this XElement element)
@@ -23,14 +23,14 @@ namespace Wordbook.Data
                 element.Element("Text").Value,
                 element.Attribute("Type").Value,
                 element.Element("Definition").Value,
-                element.Element("Registered").Value);
+                element.Attribute("Registered").Value);
         }
 
         public static XElement ToXElement(this Word word)
         {
             return new XElement("Word",
                 new XAttribute("Type", word.Type),
-                new XAttribute("Type", word.Registered),
+                new XAttribute("Registered", word.Registered),
                 new XElement("Text", word.Text),
                 new XElement("Definition", word.Definition));
         }

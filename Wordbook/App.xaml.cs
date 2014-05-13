@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using MahApps.Metro;
 
 namespace Wordbook
 {
@@ -13,5 +14,6 @@ namespace Wordbook
     /// </summary>
     public partial class App : Application
     {
+        
     }
 }

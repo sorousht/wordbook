@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wordbook>
+  <Words>
+    <Word Type="Noun" Registered="2014-05-13T15:22:18.6464114+04:30">
+      <Text>apple</Text>
+      <Definition>a kind of fruit</Definition>
+    </Word>
+    <Word Type="Noun" Registered="2014-05-13T15:22:45.7826028+04:30">
+      <Text>watermelon</Text>
+      <Definition>another fruit</Definition>
+    </Word>
+    <Word Type="Verb" Registered="2014-05-13T15:23:16.9383873+04:30">
+      <Text>go</Text>
+      <Definition>a command that tell you to leave</Definition>
+    </Word>
+  </Words>
+</Wordbook>

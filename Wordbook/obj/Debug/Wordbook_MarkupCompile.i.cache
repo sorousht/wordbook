@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 E:\Workspace\Wordbook\Wordbook\App.xaml
-4940276405
+4-247824379
 
-21-1835587138
+1790309997
 22-1341820024
-Views\Edit.xaml;MainWindow.xaml;Resources\Icons.xaml;Views\List.xaml;
+Global.xaml;Views\EditView.xaml;MainWindow.xaml;Views\ListView.xaml;
 
 False
 

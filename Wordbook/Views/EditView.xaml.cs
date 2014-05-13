@@ -5,9 +5,9 @@ namespace Wordbook.Views
     /// <summary>
     /// Interaction logic for Edit.xaml
     /// </summary>
-    public partial class Edit : UserControl
+    public partial class EditView : UserControl
     {
-        public Edit()
+        public EditView()
         {
             InitializeComponent();
         }

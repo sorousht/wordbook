@@ -70,13 +70,20 @@ namespace Wordbook.Data
             {
                 this.Document.Words().Add(word.ToXElement());
             }
-
-
         }
 
         public void Dispose()
         {
             this.Document.Save(this.FilePath);
+        }
+
+        internal void Remove(Word word)
+        {
+            var element = this.GetWord(word.Text);
+            if (element != null)
+            {
+                element.Remove();
+            }
         }
     }
 }

@@ -84,17 +84,17 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Actions\NavigateAction.cs" />
-    <Compile Include="Controllers\ControllerLocator.cs" />
-    <Compile Include="Controllers\EditController.cs" />
-    <Compile Include="Controllers\ListController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Data\DataExtensions.cs" />
     <Compile Include="Services\NavigationService.cs" />
-    <Compile Include="Views\List.xaml.cs">
-      <DependentUpon>List.xaml</DependentUpon>
+    <Compile Include="Views\ListView.xaml.cs">
+      <DependentUpon>ListView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ViewLocator.cs" />
-    <Page Include="Views\Edit.xaml">
+    <Page Include="Global.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -108,18 +108,14 @@
     </Compile>
     <Compile Include="Data\Word.cs" />
     <Compile Include="Data\XmlContext.cs" />
-    <Compile Include="Views\Edit.xaml.cs">
-      <DependentUpon>Edit.xaml</DependentUpon>
+    <Compile Include="Views\EditView.xaml.cs">
+      <DependentUpon>EditView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Resources\Icons.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\List.xaml">
+    <Page Include="Views\ListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -148,16 +144,9 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <Resource Include="Resources\Entypo.ttf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\WindowsIcons-license.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="db.xml">

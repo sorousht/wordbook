@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls;
+using Wordbook.Controllers;
 using Wordbook.Views;
 
 namespace Wordbook
@@ -25,7 +26,8 @@ namespace Wordbook
         public MainWindow()
         {
             InitializeComponent();
-            this.PageContent.Content = ViewLocator.Edit;
+            this.DataContext = new MainController();
         }
+
     }
 }
