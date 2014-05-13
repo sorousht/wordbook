@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Concurrency;
-using System.Reactive.Linq;
-using System.Windows;
-using System.Windows.Threading;
 using ReactiveUI;
 using Wordbook.Data;
-using Wordbook.Services;
 
-namespace Wordbook.Controllers
+namespace Wordbook
 {
     public class MainController : ReactiveObject
     {
@@ -88,8 +84,21 @@ namespace Wordbook.Controllers
         public ObservableCollection<Word> Words
         {
             get { return this._words; }
-            set { this.RaiseAndSetIfChanged(ref this._words, value); }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref this._words, value);
+                if (this.Words != null)
+                {
+                    this.Words.CollectionChanged += (sender, args) =>
+                    {
+                        this.RaisePropertyChanged("WordsCount");
+                    };
+                }
+                this.RaisePropertyChanged("WordsCount");
+            }
         }
+
+        public string WordsCount { get { return string.Format("{0} items.", this.Words != null ? this.Words.Count : 0); } }
 
         private Word _word;
         public Word Word

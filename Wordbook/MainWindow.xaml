@@ -2,11 +2,8 @@
                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-                      xmlns:controller="clr-namespace:Wordbook.Controllers"
-                      xmlns:views="clr-namespace:Wordbook.Views"
                       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                       xmlns:data="clr-namespace:Wordbook.Data"
-                      xmlns:actions="clr-namespace:MahApps.Metro.Actions;assembly=MahApps.Metro"
                       Title="Wordbook" 
                       ShowIconOnTitleBar="True"
                       Height="424"
@@ -91,6 +88,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="36"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         <TextBox Grid.Row="0" 
                  Text="{Binding Keyword,UpdateSourceTrigger=PropertyChanged}" 
@@ -111,5 +109,6 @@
                  SelectedItem="{Binding Word}"
                  ItemTemplate="{StaticResource WordListItemDataTemplate}"/>
         </ScrollViewer>
+        <TextBlock Grid.Row="2" Text="{Binding WordsCount}" FontSize="12" Foreground="{DynamicResource GrayBrush4}"/>
     </Grid>
 </controls:MetroWindow>
