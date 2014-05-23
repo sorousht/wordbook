@@ -5,6 +5,7 @@
                       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                       xmlns:data="clr-namespace:Wordbook.Data"
                       xmlns:local="clr-namespace:Wordbook"
+                      Name="Window"
                       Title="Wordbook" 
                       Icon="Resources/wordbook.ico"
                       ShowIconOnTitleBar="True"
@@ -40,8 +41,7 @@
                              Header="Edit" 
                              Position="Right" 
                              Theme="Dark" 
-                             MinWidth="260"
-                             MaxWidth="380"
+                             Width="{Binding ElementName=Window,Path=ActualWidth,Converter={StaticResource RatioConverter},ConverterParameter=0.64}"
                              IsOpen="{Binding IsEditMode}">
                 <Grid Margin="6">
                     <Grid.RowDefinitions>
@@ -51,14 +51,13 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="108"/>
+                        <ColumnDefinition Width="124"/>
                     </Grid.ColumnDefinitions>
                     <TextBox Grid.Column="0" 
                              Grid.Row="0" 
                              Text="{Binding WordText,UpdateSourceTrigger=PropertyChanged}"
                              controls:TextboxHelper.Watermark="Text"
-                             VerticalContentAlignment="Center"
-                             Margin="4"/>
+                             Style="{StaticResource WordTextBoxStyle}"/>
                     <ComboBox Grid.Column="1" 
                               Grid.Row="0" 
                               ItemsSource="{Binding WordTypes}" 
@@ -70,10 +69,7 @@
                              Grid.ColumnSpan="2" 
                              Text="{Binding WordDefinition}" 
                              controls:TextboxHelper.Watermark="Defenition"
-                             TextWrapping="Wrap"
-                             AcceptsReturn="True"
-                             VerticalScrollBarVisibility="Visible"
-                             Margin="4"/>
+                             Style="{StaticResource DefenitionTextBoxStyle}"/>
                     <WrapPanel Grid.Column="0" 
                                Grid.Row="2" 
                                Grid.ColumnSpan="2">

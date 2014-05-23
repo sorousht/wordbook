@@ -87,6 +87,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\SizeRatioConverter.cs" />
     <Compile Include="MainController.cs" />
     <Compile Include="Data\DataExtensions.cs" />
     <Page Include="Global.xaml">
