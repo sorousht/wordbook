@@ -5,6 +5,7 @@
                       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                       xmlns:data="clr-namespace:Wordbook.Data"
                       xmlns:local="clr-namespace:Wordbook"
+                      xmlns:customControls="clr-namespace:Wordbook.Controls"
                       Name="Window"
                       Title="Wordbook" 
                       Icon="Resources/wordbook.ico"
@@ -16,7 +17,7 @@
                       MaxWidth="600"
                       FontFamily="Segoe UI"
                       FontSize="14"
-                      ShowWindowCommandsOnTop="True">
+                      GlowBrush="{DynamicResource AccentColorBrush}">
     <Window.DataContext>
         <local:MainController/>
     </Window.DataContext>
@@ -56,8 +57,11 @@
                     <TextBox Grid.Column="0" 
                              Grid.Row="0" 
                              Text="{Binding WordText,UpdateSourceTrigger=PropertyChanged}"
-                             controls:TextboxHelper.Watermark="Text"
-                             Style="{StaticResource WordTextBoxStyle}"/>
+                             Margin="4"
+                             Padding="4,0,0,0"
+                             FontSize="15"
+                             VerticalContentAlignment="Center"
+                             controls:TextboxHelper.Watermark="Text"/>
                     <ComboBox Grid.Column="1" 
                               Grid.Row="0" 
                               ItemsSource="{Binding WordTypes}" 
@@ -68,8 +72,15 @@
                              Grid.Row="1" 
                              Grid.ColumnSpan="2" 
                              Text="{Binding WordDefinition}" 
-                             controls:TextboxHelper.Watermark="Defenition"
-                             Style="{StaticResource DefenitionTextBoxStyle}"/>
+                             Padding="4"
+                             Margin="4"
+                             FontSize="15"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             AcceptsTab="True"
+                             VerticalScrollBarVisibility="Auto"
+                             HorizontalScrollBarVisibility="Hidden"
+                             controls:TextboxHelper.Watermark="Defenition"/>
                     <WrapPanel Grid.Column="0" 
                                Grid.Row="2" 
                                Grid.ColumnSpan="2">
@@ -96,6 +107,7 @@
             </controls:Flyout>
         </controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>
+    
     <Grid Margin="6">
         <Grid.RowDefinitions>
             <RowDefinition Height="36"/>
@@ -105,6 +117,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="36"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="124"/>
         </Grid.ColumnDefinitions>
         <Button Style="{DynamicResource SquareButtonStyle}" 
                 Command="{Binding CreateWordCommand}"
@@ -118,6 +131,7 @@
         <TextBox Name="SearchTextBox"
                  Grid.Row="0"
                  Grid.Column="1"
+                 Grid.ColumnSpan="2"
                  Text="{Binding Keyword,UpdateSourceTrigger=PropertyChanged}" 
                  controls:TextboxHelper.Watermark="Search" 
                  controls:TextboxHelper.ClearTextButton="True"
@@ -127,7 +141,7 @@
         </TextBox>
         <ScrollViewer Grid.Row="1" 
                       Grid.Column="0"
-                      Grid.ColumnSpan="2"
+                      Grid.ColumnSpan="3"
                       HorizontalScrollBarVisibility="Hidden" 
                       VerticalScrollBarVisibility="Auto"
                       Margin="0,10,0,0">
@@ -141,5 +155,14 @@
                    Text="{Binding WordsCount}"
                    FontSize="12"
                    Foreground="{DynamicResource GrayBrush4}"/>
+        <customControls:RichTipSlider Grid.Row="2"
+                                      Grid.Column="2"
+                                      Minimum="0"
+                                      Maximum="5"
+                                      Value="{Binding TimePeriod}"
+                                      AutoToolTipPlacement="TopLeft"
+                                      AutoToolTipContent="{Binding TimePeriod,Converter={StaticResource TimePeriodValueToLableConverter}}"
+                                      AutoTooltipVerticalOffset="-6"
+                                      Style="{StaticResource FlatSlider}"/>
     </Grid>
 </controls:MetroWindow>

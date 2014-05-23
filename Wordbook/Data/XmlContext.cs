@@ -32,18 +32,23 @@ namespace Wordbook.Data
             }
         }
 
-        public IEnumerable<Word> GetWords(string keyword)
+        public IEnumerable<Word> GetWords(string keyword, DateTime date)
         {
             if (!string.IsNullOrWhiteSpace(keyword))
             {
-                return this.Document.Words().WordsList()
-                    .Where(word => word.AsWord().Text.StartsWith(keyword, StringComparison.OrdinalIgnoreCase))
-                    .SelectAsWord();
+                return from element in this.Document.Words().WordsList()
+                       let word = element.AsWord()
+                       where word.Text.StartsWith(keyword, StringComparison.OrdinalIgnoreCase) &&
+                             word.Registered > date
+                       select word;
 
             }
             else
             {
-                return this.Document.Words().WordsList().SelectAsWord();
+                return from element in this.Document.Words().WordsList()
+                       let word = element.AsWord()
+                       where word.Registered > date
+                       select word;
 
             }
 

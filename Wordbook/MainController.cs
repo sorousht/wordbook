@@ -11,6 +11,15 @@ namespace Wordbook
     public class MainController : ReactiveObject
     {
         private readonly string DbFileName = "db.xml";
+        private readonly Dictionary<int, DateTime> _timeRanges = new Dictionary<int, DateTime>
+        {
+            {0,DateTime.Now.AddDays(-1)},
+            {1,DateTime.Now.AddDays(-2)},
+            {2,DateTime.Now.AddDays(-7)},
+            {3,DateTime.Now.AddMonths(-1)},
+            {4,DateTime.Now.AddMonths(-6)},
+            {5,DateTime.Now.AddYears(-1)},
+        };
 
         public MainController()
         {
@@ -22,17 +31,15 @@ namespace Wordbook
         {
             this.IsInitializing = true;
 
+            //Last Week
+            this.TimePeriod = 2;
+
             this.Context = new XmlContext(DbFileName);
 
             this.WordTypes = Enum.GetNames(typeof(WordType)).Select(type => (WordType)Enum.Parse(typeof(WordType), type));
             this.WordType = WordType.Noun;
 
-            this.WhenAny(controller => controller.Keyword,
-                (keyword) => this.SearchWords(keyword.Value))
-                .Subscribe(words => this.Words = words);
-
-
-            this.SaveCommand = new ReactiveCommand(this.WhenAny(
+           this.SaveCommand = new ReactiveCommand(this.WhenAny(
                 controller => controller.WordText,
                 controller => controller.WordType,
                 (text, type) => !string.IsNullOrWhiteSpace(text.Value) && type.Value.GetHashCode() != 0));
@@ -47,12 +54,28 @@ namespace Wordbook
 
             this.CreateWordCommand.RegisterAsyncAction(keyword => this.Create(keyword), Scheduler.CurrentThread);
 
-            this.IsInitializing = false;
-        }
+            this.WhenAny(controller => controller.Keyword, controller => controller.TimePeriod,
+               (keyword, period) =>
+                   this.SearchWords(keyword.Value, this._timeRanges[period.Value]))
+               .Subscribe(words => this.Words = words);
 
-        private ObservableCollection<Word> SearchWords(string keyword)
-        {
-            return new ObservableCollection<Word>(Context.GetWords(keyword));
+            this.WhenAny(controller => controller.Word, (word) => word).Subscribe(change =>
+            {
+                if (!this.IsInitializing)
+                {
+                    this.IsEditMode = true;
+                    this.RaisePropertyChanged("WordText");
+                    this.RaisePropertyChanged("WordDefinition");
+                    this.RaisePropertyChanged("WordType");
+                }
+            });
+
+            this.WhenAny(controller => controller.Words, (words) => words).Subscribe(change =>
+            {
+                this.IsEditMode = false;
+            });
+
+            this.IsInitializing = false;
         }
 
         private XmlContext Context { get; set; }
@@ -116,17 +139,7 @@ namespace Wordbook
                 }
                 return this._word;
             }
-            set
-            {
-                this._word = value;
-                if (!this.IsInitializing)
-                {
-                    this.IsEditMode = true;
-                    this.RaisePropertyChanged("WordText");
-                    this.RaisePropertyChanged("WordDefinition");
-                    this.RaisePropertyChanged("WordType");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref this._word, value); }
         }
 
         public string WordText
@@ -193,7 +206,19 @@ namespace Wordbook
             set { this.RaiseAndSetIfChanged(ref this._keyword, value); }
         }
 
+        private int _timePeriod;
+        public int TimePeriod
+        {
+            get { return this._timePeriod; }
+            set { this.RaiseAndSetIfChanged(ref this._timePeriod, value); }
+        }
+
         public bool IsInitializing { get; set; }
+
+        private ObservableCollection<Word> SearchWords(string keyword, DateTime range)
+        {
+            return new ObservableCollection<Word>(Context.GetWords(keyword,range));
+        }
 
         private void Save()
         {

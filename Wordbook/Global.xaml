@@ -12,21 +12,6 @@
     </Canvas>
     
     <converters:SizeRatioConverter x:Key="RatioConverter"/>
+    <converters:TimePeriodValueToLableConverter x:Key="TimePeriodValueToLableConverter"/>
     
-    <Style x:Key="DefenitionTextBoxStyle" TargetType="{x:Type TextBox}">
-        <Setter Property="Padding" Value="6"/>
-        <Setter Property="Margin" Value="4"/>
-        <Setter Property="FontSize" Value="15"/>
-        <Setter Property="TextWrapping" Value="Wrap"></Setter>
-        <Setter Property="AcceptsReturn" Value="True"/>
-        <Setter Property="AcceptsTab" Value="True"/>
-        <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
-        <Setter Property="HorizontalScrollBarVisibility" Value="Hidden"/>
-    </Style>
-
-    <Style x:Key="WordTextBoxStyle" TargetType="{x:Type TextBox}">
-        <Setter Property="Margin" Value="4"/>
-        <Setter Property="FontSize" Value="15"/>
-        <Setter Property="VerticalContentAlignment" Value="Center"/>
-    </Style>
 </ResourceDictionary>
