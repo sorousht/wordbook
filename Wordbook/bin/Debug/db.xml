@@ -1,17 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Wordbook>
-  <Words>
-    <Word Type="Noun" Registered="2014-05-13T18:51:26.4518121+04:30">
-      <Text>soroush</Text>
-      <Definition>the second child</Definition>
-    </Word>
-    <Word Type="Noun" Registered="2014-05-13T19:06:10.3432809+04:30">
-      <Text>foo</Text>
-      <Definition>foo</Definition>
-    </Word>
-    <Word Type="Noun" Registered="2014-05-13T19:06:26.120398+04:30">
-      <Text>goop</Text>
-      <Definition>goop</Definition>
-    </Word>
-  </Words>
+  <Words />
 </Wordbook>

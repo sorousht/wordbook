@@ -6,7 +6,7 @@ using System.Xml.Linq;
 
 namespace Wordbook.Data
 {
-    public class XmlContext:IDisposable
+    public class XmlContext
     {
         public XmlContext(string uri)
         {
@@ -49,41 +49,49 @@ namespace Wordbook.Data
 
         }
 
-        private XElement GetWord(string text)
+        private XElement GetWord(DateTime registered)
         {
-            return this.Document.Words().WordsList().FirstOrDefault(element => this.WordsAreEqual(element.AsWord().Text, text));
+            return this.Document.Words()
+                .WordsList()
+                .FirstOrDefault(element => element.AsWord().Registered == registered);
         }
 
-        private bool WordsAreEqual(string first, string second)
+        public void AddWord(Word word)
         {
-            return string.Equals(first, second, StringComparison.OrdinalIgnoreCase);
+            this.Document.Words().Add(word.ToXElement());
+
+            this.Document.Save(FilePath);
         }
 
-        public void SaveWord(Word word)
+        public void UpdateWord(Word word)
         {
-            var element = this.GetWord(word.Text);
+            var element = this.GetWord(word.Registered);
+
             if (element != null)
             {
                 element.ReplaceWith(word.ToXElement());
+                this.Document.Save(FilePath);
             }
-            else
-            {
-                this.Document.Words().Add(word.ToXElement());
-            }
+
         }
 
-        public void Dispose()
+        public void Remove(Word word)
         {
-            this.Document.Save(this.FilePath);
-        }
+            var element = this.GetWord(word.Registered);
 
-        internal void Remove(Word word)
-        {
-            var element = this.GetWord(word.Text);
             if (element != null)
             {
                 element.Remove();
+
+                this.Document.Save(this.FilePath);
             }
+        }
+
+        public bool Exists(Word word)
+        {
+            return this.Document.Words()
+                .WordsList()
+                .Any(element => element.AsWord().Registered == word.Registered);
         }
     }
 }

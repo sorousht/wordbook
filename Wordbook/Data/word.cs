@@ -32,7 +32,7 @@ namespace Wordbook.Data
 
         public override int GetHashCode()
         {
-            return this.Text.GetHashCode();
+            return this.Registered.GetHashCode();
         }
 
         public override bool Equals(object obj)
@@ -40,8 +40,9 @@ namespace Wordbook.Data
             var word = obj as Word;
             if (word != null)
             {
-                return string.Equals(this.Text, word.Text, StringComparison.InvariantCultureIgnoreCase);
+                return this.Registered == word.Registered;
             }
+
             return false;
         }
     }

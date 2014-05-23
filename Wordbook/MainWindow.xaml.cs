@@ -10,8 +10,6 @@ namespace Wordbook
         public MainWindow()
         {
             InitializeComponent();
-            this.DataContext = new MainController();
         }
-
     }
 }

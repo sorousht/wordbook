@@ -22,6 +22,8 @@ namespace Wordbook
         {
             this.IsInitializing = true;
 
+            this.Context = new XmlContext(DbFileName);
+
             this.WordTypes = Enum.GetNames(typeof(WordType)).Select(type => (WordType)Enum.Parse(typeof(WordType), type));
             this.WordType = WordType.Noun;
 
@@ -37,7 +39,7 @@ namespace Wordbook
 
             this.RemoveCommand = new ReactiveCommand(this.WhenAny(controller => controller.WordText, (text) => !string.IsNullOrWhiteSpace(text.Value)));
 
-            this.CreateWordCommand = new ReactiveCommand(this.WhenAny(controller => controller.Keyword, (keyword) => !string.IsNullOrWhiteSpace(keyword.Value)));
+            this.CreateWordCommand = new ReactiveCommand();
 
             this.SaveCommand.RegisterAsyncAction(_ => this.Save(), Scheduler.CurrentThread);
 
@@ -50,11 +52,10 @@ namespace Wordbook
 
         private ObservableCollection<Word> SearchWords(string keyword)
         {
-            using (var context = new XmlContext(DbFileName))
-            {
-                return new ObservableCollection<Word>(context.GetWords(keyword));
-            }
+            return new ObservableCollection<Word>(Context.GetWords(keyword));
         }
+
+        private XmlContext Context { get; set; }
 
         public ReactiveCommand InitializeCommand { get; set; }
         private ReactiveCommand _saveCommand;
@@ -196,19 +197,35 @@ namespace Wordbook
 
         private void Save()
         {
-            using (var context = new XmlContext(DbFileName))
+            if (this.Context.Exists(this.Word))
             {
-                context.SaveWord(this.Word);
+                var word = this.Word;
+
+                this.Context.UpdateWord(word);
+
+                this.ResetWord(word);
             }
-            this.Words.Add(Word);
+            else
+            {
+                this.Context.AddWord(this.Word);
+                this.Words.Add(this.Word);
+            }
+        }
+
+        private void ResetWord(Word word)
+        {
+            var index = this.Words.IndexOf(word);
+
+            this.Words.RemoveAt(index);
+            this.Words.Insert(index, word);
+
+            this.Word = word;
         }
 
         private void Remove()
         {
-            using (var context = new XmlContext(DbFileName))
-            {
-                context.Remove(this.Word);
-            }
+            this.Context.Remove(this.Word);
+
             this.Words.Remove(this.Word);
         }
 
@@ -219,7 +236,7 @@ namespace Wordbook
                 Text = keyword.ToString(),
                 Type = WordType.Noun
             };
-            
+
             this.IsEditMode = true;
         }
     }
