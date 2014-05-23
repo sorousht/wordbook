@@ -6,6 +6,7 @@
                       xmlns:data="clr-namespace:Wordbook.Data"
                       xmlns:local="clr-namespace:Wordbook"
                       Title="Wordbook" 
+                      Icon="Resources/wordbook.ico"
                       ShowIconOnTitleBar="True"
                       Height="424"
                       Width="392"
