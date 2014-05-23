@@ -34,8 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>Resources\wordbook.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MahApps.Metro">
