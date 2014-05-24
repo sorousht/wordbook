@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Concurrency;
+using System.Windows;
 using ReactiveUI;
 using Wordbook.Data;
+using Wordbook.Properties;
 
 namespace Wordbook
 {
@@ -13,12 +15,12 @@ namespace Wordbook
         private readonly string DbFileName = "db.xml";
         private readonly Dictionary<int, DateTime> _timeRanges = new Dictionary<int, DateTime>
         {
-            {0,DateTime.Now.AddDays(-1)},
-            {1,DateTime.Now.AddDays(-2)},
-            {2,DateTime.Now.AddDays(-7)},
-            {3,DateTime.Now.AddMonths(-1)},
-            {4,DateTime.Now.AddMonths(-6)},
-            {5,DateTime.Now.AddYears(-1)},
+            {0,DateTime.Now.AddDays(-1).Date},
+            {1,DateTime.Now.AddDays(-2).Date},
+            {2,DateTime.Now.AddDays(-7).Date},
+            {3,DateTime.Now.AddMonths(-1).Date},
+            {4,DateTime.Now.AddMonths(-6).Date},
+            {5,DateTime.Now.AddYears(-1).Date},
         };
 
         public MainController()
@@ -32,17 +34,17 @@ namespace Wordbook
             this.IsInitializing = true;
 
             //Last Week
-            this.TimePeriod = 2;
+            this.TimePeriod = Settings.Default.ChosenTimePeriod;
 
             this.Context = new XmlContext(DbFileName);
 
             this.WordTypes = Enum.GetNames(typeof(WordType)).Select(type => (WordType)Enum.Parse(typeof(WordType), type));
             this.WordType = WordType.Noun;
 
-           this.SaveCommand = new ReactiveCommand(this.WhenAny(
-                controller => controller.WordText,
-                controller => controller.WordType,
-                (text, type) => !string.IsNullOrWhiteSpace(text.Value) && type.Value.GetHashCode() != 0));
+            this.SaveCommand = new ReactiveCommand(this.WhenAny(
+                 controller => controller.WordText,
+                 controller => controller.WordType,
+                 (text, type) => !string.IsNullOrWhiteSpace(text.Value) && type.Value.GetHashCode() != 0));
 
             this.RemoveCommand = new ReactiveCommand(this.WhenAny(controller => controller.WordText, (text) => !string.IsNullOrWhiteSpace(text.Value)));
 
@@ -57,7 +59,12 @@ namespace Wordbook
             this.WhenAny(controller => controller.Keyword, controller => controller.TimePeriod,
                (keyword, period) =>
                    this.SearchWords(keyword.Value, this._timeRanges[period.Value]))
-               .Subscribe(words => this.Words = words);
+               .Subscribe(words =>
+               {
+                   this.Words = words;
+
+                   this.Word = this.GetPreviouslyChosenWord();
+               });
 
             this.WhenAny(controller => controller.Word, (word) => word).Subscribe(change =>
             {
@@ -75,7 +82,28 @@ namespace Wordbook
                 this.IsEditMode = false;
             });
 
+            this.WhenAny(controller => controller.TimePeriod, controller => controller.Word, (period, word) =>
+            {
+                Settings.Default.ChosenTimePeriod = period.Value;
+                Settings.Default.ChosenWordRegisteredUtc = word.Value.Registered.ToFileTimeUtc();
+
+                return true;
+            }).Subscribe(_ => Settings.Default.Save());
+
             this.IsInitializing = false;
+        }
+
+        private Word GetPreviouslyChosenWord()
+        {
+            if (this.Word != null)
+            {
+                var chosenDateTime = DateTime.FromFileTimeUtc(Settings.Default.ChosenWordRegisteredUtc).ToLocalTime();
+                return this.Words.SingleOrDefault(word => word.Registered == chosenDateTime) ??
+                       this.Words.FirstOrDefault();
+            }
+
+            return null;
+
         }
 
         private XmlContext Context { get; set; }
@@ -217,7 +245,7 @@ namespace Wordbook
 
         private ObservableCollection<Word> SearchWords(string keyword, DateTime range)
         {
-            return new ObservableCollection<Word>(Context.GetWords(keyword,range));
+            return new ObservableCollection<Word>(Context.GetWords(keyword, range));
         }
 
         private void Save()

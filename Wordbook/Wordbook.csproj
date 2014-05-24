@@ -87,7 +87,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Controls\RichTipSlider.cs" />
+    <Compile Include="Controls\CustomToolTipSlider.cs" />
     <Compile Include="Converters\SizeRatioConverter.cs" />
     <Compile Include="Converters\TimePeriodValueToLableConverter.cs" />
     <Compile Include="MainController.cs" />
@@ -131,7 +131,7 @@
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />

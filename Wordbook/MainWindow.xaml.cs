@@ -1,4 +1,5 @@
 ﻿using MahApps.Metro.Controls;
+using Wordbook.Properties;
 
 namespace Wordbook
 {

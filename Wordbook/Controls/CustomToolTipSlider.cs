@@ -5,7 +5,7 @@ using System.Windows.Controls.Primitives;
 
 namespace Wordbook.Controls
 {
-    public class RichTipSlider : Slider
+    public class CustomToolTipSlider : Slider
     {
         private ToolTip _autoToolTip;
         public ToolTip AutoToolTip
@@ -31,7 +31,7 @@ namespace Wordbook.Controls
         }
 
         public static readonly DependencyProperty AutoToolTipContentProperty = DependencyProperty.Register(
-            "AutoToolTipContent", typeof(string), typeof(RichTipSlider), new PropertyMetadata(default(string)));
+            "AutoToolTipContent", typeof(string), typeof(CustomToolTipSlider), new PropertyMetadata(default(string)));
         
         public object AutoToolTipContent
         {
@@ -40,7 +40,7 @@ namespace Wordbook.Controls
         }
 
         public static readonly DependencyProperty AutoTooltipVerticalOffsetProperty = DependencyProperty.Register(
-            "AutoTooltipVerticalOffset", typeof (int), typeof (RichTipSlider), new PropertyMetadata(default(int)));
+            "AutoTooltipVerticalOffset", typeof (int), typeof (CustomToolTipSlider), new PropertyMetadata(default(int)));
 
         public int AutoTooltipVerticalOffset
         {
