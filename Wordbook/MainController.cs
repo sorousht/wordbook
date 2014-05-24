@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Concurrency;
+using System.Threading;
 using System.Windows;
 using ReactiveUI;
 using Wordbook.Data;
@@ -33,10 +34,9 @@ namespace Wordbook
         {
             this.IsInitializing = true;
 
-            //Last Week
-            this.TimePeriod = Settings.Default.ChosenTimePeriod;
-
             this.Context = new XmlContext(DbFileName);
+
+            this.TimePeriod = this.ChosenTimePeriod;
 
             this.WordTypes = Enum.GetNames(typeof(WordType)).Select(type => (WordType)Enum.Parse(typeof(WordType), type));
             this.WordType = WordType.Noun;
@@ -57,23 +57,29 @@ namespace Wordbook
             this.CreateWordCommand.RegisterAsyncAction(keyword => this.Create(keyword), Scheduler.CurrentThread);
 
             this.WhenAny(controller => controller.Keyword, controller => controller.TimePeriod,
-               (keyword, period) =>
-                   this.SearchWords(keyword.Value, this._timeRanges[period.Value]))
+                (keyword, period) =>
+                {
+                    this.ChosenTimePeriod = period.Value;
+                    return this.SearchWords(keyword.Value, this._timeRanges[period.Value]);
+                })
                .Subscribe(words =>
                {
                    this.Words = words;
 
-                   this.Word = this.GetPreviouslyChosenWord();
+                   this.Word = this.GetChosenWord();
                });
 
-            this.WhenAny(controller => controller.Word, (word) => word).Subscribe(change =>
+            this.WhenAny(controller => controller.Word, (word) => word).Subscribe(word =>
             {
                 if (!this.IsInitializing)
                 {
                     this.IsEditMode = true;
+
                     this.RaisePropertyChanged("WordText");
                     this.RaisePropertyChanged("WordDefinition");
                     this.RaisePropertyChanged("WordType");
+
+                    this.ChosenWordRegisteredSetting = word.Value.Registered;
                 }
             });
 
@@ -82,23 +88,50 @@ namespace Wordbook
                 this.IsEditMode = false;
             });
 
-            this.WhenAny(controller => controller.TimePeriod, controller => controller.Word, (period, word) =>
-            {
-                Settings.Default.ChosenTimePeriod = period.Value;
-                Settings.Default.ChosenWordRegisteredUtc = word.Value.Registered.ToFileTimeUtc();
-
-                return true;
-            }).Subscribe(_ => Settings.Default.Save());
-
             this.IsInitializing = false;
         }
 
-        private Word GetPreviouslyChosenWord()
+        #region Settings
+
+        private DateTime _chosenWordRegisteredSetting;
+
+        private DateTime ChosenWordRegisteredSetting
+        {
+            get { return DateTime.FromFileTimeUtc(Settings.Default.ChosenWordRegisteredUtc).ToLocalTime(); }
+            set
+            {
+                if (_chosenWordRegisteredSetting != value)
+                {
+                    this._chosenWordRegisteredSetting = value;
+                    Settings.Default.ChosenWordRegisteredUtc = value.ToFileTime();
+                    Settings.Default.Save();
+                }
+            }
+        }
+
+        private int _chosenTimePeriod;
+
+        private int ChosenTimePeriod
+        {
+            get { return Settings.Default.ChosenTimePeriod; }
+            set
+            {
+                if (_chosenTimePeriod != value)
+                {
+                    this._chosenTimePeriod = value;
+                    Settings.Default.ChosenTimePeriod = value;
+                    Settings.Default.Save();
+                }
+            }
+        }
+
+        #endregion
+
+        private Word GetChosenWord()
         {
             if (this.Word != null)
             {
-                var chosenDateTime = DateTime.FromFileTimeUtc(Settings.Default.ChosenWordRegisteredUtc).ToLocalTime();
-                return this.Words.SingleOrDefault(word => word.Registered == chosenDateTime) ??
+                return this.Words.SingleOrDefault(word => word.Registered == this.ChosenWordRegisteredSetting) ??
                        this.Words.FirstOrDefault();
             }
 

@@ -42,7 +42,7 @@ namespace Wordbook.Data
             {
                 throw new ArgumentNullException("element");
             }
-            return element.Elements("Word").Take(DataExtensions.MaxItemsCount);
+            return element.Elements("Word");
         }
 
         public static XElement Words(this XDocument document)
