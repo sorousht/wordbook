@@ -63,6 +63,8 @@ namespace Wordbook.Data
 
         public void AddWord(Word word)
         {
+            word.Registered = DateTime.Now;
+
             this.Document.Words().Add(word.ToXElement());
 
             this.Document.Save(FilePath);
@@ -70,7 +72,7 @@ namespace Wordbook.Data
 
         public void UpdateWord(Word word)
         {
-            var element = this.GetWord(word.Registered);
+            var element = word.Registered.HasValue ? this.GetWord(word.Registered.Value) : null;
 
             if (element != null)
             {
@@ -82,7 +84,7 @@ namespace Wordbook.Data
 
         public void Remove(Word word)
         {
-            var element = this.GetWord(word.Registered);
+            var element = word.Registered.HasValue ? this.GetWord(word.Registered.Value) : null;
 
             if (element != null)
             {

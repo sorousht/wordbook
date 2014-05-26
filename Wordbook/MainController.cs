@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using ReactiveUI;
 using Wordbook.Data;
@@ -13,82 +14,96 @@ namespace Wordbook
 {
     public class MainController : ReactiveObject
     {
+        #region Constants
+
         private readonly string DbFileName = "db.xml";
+
         private readonly Dictionary<int, DateTime> _timeRanges = new Dictionary<int, DateTime>
         {
-            {0,DateTime.Now.AddDays(-1).Date},
-            {1,DateTime.Now.AddDays(-2).Date},
-            {2,DateTime.Now.AddDays(-7).Date},
-            {3,DateTime.Now.AddMonths(-1).Date},
-            {4,DateTime.Now.AddMonths(-6).Date},
-            {5,DateTime.Now.AddYears(-1).Date},
+            {0, DateTime.Now.AddDays(-1).Date},
+            {1, DateTime.Now.AddDays(-2).Date},
+            {2, DateTime.Now.AddDays(-7).Date},
+            {3, DateTime.Now.AddMonths(-1).Date},
+            {4, DateTime.Now.AddMonths(-6).Date},
+            {5, DateTime.Now.AddYears(-1).Date},
         };
+
+        #endregion
 
         public MainController()
         {
+            this.Word = new Word();
             this.InitializeCommand = new ReactiveCommand();
-            this.InitializeCommand.RegisterAsyncAction(_ => this.Initialize());
+            this.InitializeCommand.Subscribe(_ => this.Initialize());
         }
 
-        private void Initialize()
+        private async void Initialize()
         {
-            this.IsInitializing = true;
-
-            this.Context = new XmlContext(DbFileName);
-
-            this.TimePeriod = this.ChosenTimePeriod;
-
-            this.WordTypes = Enum.GetNames(typeof(WordType)).Select(type => (WordType)Enum.Parse(typeof(WordType), type));
-            this.WordType = WordType.Noun;
-
-            this.SaveCommand = new ReactiveCommand(this.WhenAny(
-                 controller => controller.WordText,
-                 controller => controller.WordType,
-                 (text, type) => !string.IsNullOrWhiteSpace(text.Value) && type.Value.GetHashCode() != 0));
-
-            this.RemoveCommand = new ReactiveCommand(this.WhenAny(controller => controller.WordText, (text) => !string.IsNullOrWhiteSpace(text.Value)));
-
-            this.CreateWordCommand = new ReactiveCommand();
-
-            this.SaveCommand.RegisterAsyncAction(_ => this.Save(), Scheduler.CurrentThread);
-
-            this.RemoveCommand.RegisterAsyncAction(_ => this.Remove(), Scheduler.CurrentThread);
-
-            this.CreateWordCommand.RegisterAsyncAction(keyword => this.Create(keyword), Scheduler.CurrentThread);
-
-            this.WhenAny(controller => controller.Keyword, controller => controller.TimePeriod,
-                (keyword, period) =>
-                {
-                    this.ChosenTimePeriod = period.Value;
-                    return this.SearchWords(keyword.Value, this._timeRanges[period.Value]);
-                })
-               .Subscribe(words =>
-               {
-                   this.Words = words;
-
-                   this.Word = this.GetChosenWord();
-               });
-
-            this.WhenAny(controller => controller.Word, (word) => word).Subscribe(word =>
+            await Task.Run(() =>
             {
-                if (!this.IsInitializing)
+                this.IsInitializing = true;
+
+                this.Context = new XmlContext(DbFileName);
+
+                this.TimePeriod = this.ChosenTimePeriod;
+
+                this.WordTypes =
+                    Enum.GetNames(typeof(WordType)).Select(type => (WordType)Enum.Parse(typeof(WordType), type));
+                this.WordType = WordType.Noun;
+
+                this.SaveCommand = new ReactiveCommand(this.WhenAny(
+                    controller => controller.WordText,
+                    controller => controller.WordType,
+                    (text, type) => !string.IsNullOrWhiteSpace(text.Value) && type.Value.GetHashCode() != 0));
+
+                this.RemoveCommand =
+                    new ReactiveCommand(this.WhenAny(controller => controller.Word,
+                        (word) => word.Value != null && word.Value.Registered.HasValue));
+
+                this.CreateWordCommand = new ReactiveCommand();
+
+                this.SaveCommand.Subscribe(_ => this.Save());
+
+                this.RemoveCommand.Subscribe(_ => this.Remove());
+
+                this.CreateWordCommand.Subscribe(this.Create);
+
+                this.WhenAny(controller => controller.Keyword, controller => controller.TimePeriod,
+                    (keyword, period) =>
+                    {
+                        this.ChosenTimePeriod = period.Value;
+                        return this.SearchWords(keyword.Value, this._timeRanges[period.Value]);
+                    })
+                    .Subscribe(words =>
+                    {
+                        this.Words = words;
+                    });
+
+
+                this.WhenAny(controller => controller.Word, (word) => word).Subscribe(word =>
                 {
-                    this.IsEditMode = true;
+                    if (!this.IsInitializing && word.Value != null)
+                    {
+                        this.IsEditMode = true;
 
-                    this.RaisePropertyChanged("WordText");
-                    this.RaisePropertyChanged("WordDefinition");
-                    this.RaisePropertyChanged("WordType");
+                        this.RaisePropertyChanged("WordText");
+                        this.RaisePropertyChanged("WordDefinition");
+                        this.RaisePropertyChanged("WordType");
 
-                    this.ChosenWordRegisteredSetting = word.Value.Registered;
+                        this.ChosenWordRegisteredSetting = word.Value.Registered.HasValue
+                            ? word.Value.Registered.Value
+                            : DateTime.Today;
+                    }
+                });
+
+                if (this.Words != null)
+                {
+                    this.Word = this.Words.SingleOrDefault(word => word.Registered == this.ChosenWordRegisteredSetting) ??
+                                this.Words.FirstOrDefault();
                 }
-            });
 
-            this.WhenAny(controller => controller.Words, (words) => words).Subscribe(change =>
-            {
-                this.IsEditMode = false;
+                this.IsInitializing = false;
             });
-
-            this.IsInitializing = false;
         }
 
         #region Settings
@@ -127,19 +142,7 @@ namespace Wordbook
 
         #endregion
 
-        private Word GetChosenWord()
-        {
-            if (this.Word != null)
-            {
-                return this.Words.SingleOrDefault(word => word.Registered == this.ChosenWordRegisteredSetting) ??
-                       this.Words.FirstOrDefault();
-            }
-
-            return null;
-
-        }
-
-        private XmlContext Context { get; set; }
+        #region Commands
 
         public ReactiveCommand InitializeCommand { get; set; }
         private ReactiveCommand _saveCommand;
@@ -159,11 +162,16 @@ namespace Wordbook
         }
 
         private ReactiveCommand _createWord;
+
         public ReactiveCommand CreateWordCommand
         {
             get { return this._createWord; }
             set { this.RaiseAndSetIfChanged(ref this._createWord, value); }
         }
+
+        #endregion
+
+        private XmlContext Context { get; set; }
 
         private ObservableCollection<Word> _words;
         public ObservableCollection<Word> Words
@@ -186,20 +194,10 @@ namespace Wordbook
         public string WordsCount { get { return string.Format("{0} items.", this.Words != null ? this.Words.Count : 0); } }
 
         private Word _word;
+
         public Word Word
         {
-            get
-            {
-                if (this._word == null)
-                {
-                    this._word = new Word
-                    {
-                        Text = string.Empty,
-                        Type = WordType.Noun,
-                    };
-                }
-                return this._word;
-            }
+            get { return this._word; }
             set { this.RaiseAndSetIfChanged(ref this._word, value); }
         }
 
@@ -207,7 +205,7 @@ namespace Wordbook
         {
             get
             {
-                return this.Word.Text;
+                return this.Word != null ? this.Word.Text : null;
             }
             set
             {
@@ -215,12 +213,11 @@ namespace Wordbook
                 this.RaisePropertyChanged();
             }
         }
-
         public string WordDefinition
         {
             get
             {
-                return this.Word.Definition;
+                return this.Word != null ? this.Word.Definition : null;
             }
             set
             {
@@ -238,10 +235,7 @@ namespace Wordbook
 
         public WordType WordType
         {
-            get
-            {
-                return this.Word.Type;
-            }
+            get { return this.Word != null ? this.Word.Type : WordType.Noun; }
             set
             {
                 this.Word.Type = value;
@@ -310,9 +304,25 @@ namespace Wordbook
 
         private void Remove()
         {
+            var index = this.Words.IndexOf(this.Word);
+
             this.Context.Remove(this.Word);
 
             this.Words.Remove(this.Word);
+
+            this.SelectNextWord(index);
+        }
+
+        private void SelectNextWord(int index)
+        {
+            if (this.Words.Count > index)
+            {
+                this.Word = this.Words[index];
+            }
+            else
+            {
+                this.Word = this.Words.LastOrDefault();
+            }
         }
 
         private void Create(object keyword)

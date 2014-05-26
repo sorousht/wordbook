@@ -11,7 +11,7 @@ namespace Wordbook.Data
     {
         public Word()
         {
-            this.Registered = DateTime.Now;
+            
         }
         public Word(string text, string type, string definition, string registered)
         {
@@ -23,7 +23,7 @@ namespace Wordbook.Data
         public string Text { get; set; }
         public WordType Type { get; set; }
         public string Definition { get; set; }
-        public DateTime Registered { get; set; }
+        public DateTime? Registered { get; set; }
 
         public override string ToString()
         {

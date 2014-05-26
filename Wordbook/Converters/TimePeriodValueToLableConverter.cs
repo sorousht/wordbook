@@ -11,10 +11,10 @@ namespace Wordbook.Converters
         {
             {0,"Today"},
             {1,"Yesterday"},
-            {2,"Last week"},
-            {3,"Last month"},
-            {4,"6 Months ago"},
-            {5,"Last year"},
+            {2,"This week"},
+            {3,"This month"},
+            {4,"Last 6 Months"},
+            {5,"This year"},
         };
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
