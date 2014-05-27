@@ -167,11 +167,11 @@
                    Foreground="{DynamicResource GrayBrush4}"
                    VerticalAlignment="Center">
             <TextBlock.Resources>
-                <Storyboard x:Key="TextChangeStoryboard" TargetName="StatusTextBlock" BeginTime="0:0:4">
-                    <DoubleAnimation Duration="0:0:2"
+                <Storyboard x:Key="TextChangeStoryboard" TargetName="StatusTextBlock">
+                    <DoubleAnimation Duration="0:0:4"
                              Storyboard.TargetProperty="Opacity" 
                              From="1" To="0" 
-                             AccelerationRatio="0.4"/>
+                             AccelerationRatio="0.99"/>
                 </Storyboard>
             </TextBlock.Resources>
         </TextBlock>

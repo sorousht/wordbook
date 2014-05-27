@@ -30,7 +30,9 @@ namespace Wordbook
                 if (options != null)
                 {
                     this.StatusTextBlock.Text = string.Format(Messages[options.State], options.Parameter);
-                    ((Storyboard)this.StatusTextBlock.Resources["TextChangeStoryboard"]).Begin();
+                    var storyboard = ((Storyboard)this.StatusTextBlock.Resources["TextChangeStoryboard"]);
+                    storyboard.SkipToFill();
+                    storyboard.Begin();
                 }
             }));
         }
