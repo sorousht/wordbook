@@ -1,1 +1,1 @@
-E:\Workspace\Wordbook\Wordbook\obj\Release\Wordbook.g.resources
+E:\Workspace\Wordbook\Wordbook\bin\Release\Wordbook.exe

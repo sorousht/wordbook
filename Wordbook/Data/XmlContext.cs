@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Xml.Linq;
 
 namespace Wordbook.Data
@@ -40,6 +41,7 @@ namespace Wordbook.Data
                        let word = element.AsWord()
                        where word.Text.StartsWith(keyword, StringComparison.OrdinalIgnoreCase) &&
                              word.Registered > date
+                       orderby word.Registered descending
                        select word;
 
             }
@@ -48,6 +50,7 @@ namespace Wordbook.Data
                 return from element in this.Document.Words().WordsList()
                        let word = element.AsWord()
                        where word.Registered > date
+                       orderby word.Registered descending
                        select word;
 
             }

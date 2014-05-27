@@ -6,6 +6,7 @@
                       xmlns:data="clr-namespace:Wordbook.Data"
                       xmlns:local="clr-namespace:Wordbook"
                       xmlns:customControls="clr-namespace:Wordbook.Controls"
+                      xmlns:controllers="clr-namespace:Wordbook.Controllers"
                       Name="Window"
                       Title="Wordbook" 
                       Icon="Resources/wordbook.ico"
@@ -19,7 +20,7 @@
                       IsTabStop="False"
                       GlowBrush="{DynamicResource AccentColorBrush}">
     <Window.DataContext>
-        <local:MainController/>
+        <controllers:MainController/>
     </Window.DataContext>
     <Window.Resources>
         <DataTemplate x:Key="WordListItemDataTemplate" 
@@ -158,13 +159,14 @@
                 <KeyBinding Key="Delete" Command="{Binding RemoveCommand}"/>
             </ListBox.InputBindings>
         </ListBox>
-        <TextBlock Grid.Row="2"
+        <TextBlock Name="StatusTextBlock" 
+                   Grid.Row="2"
                    Grid.ColumnSpan="2"
                    Grid.Column="0"
-                   Text="{Binding WordsCount}"
                    FontSize="12"
                    Foreground="{DynamicResource GrayBrush4}"
-                   VerticalAlignment="Center"/>
+                   VerticalAlignment="Center">
+        </TextBlock>
         <customControls:CustomToolTipSlider Grid.Row="2"
                                             Grid.Column="2"
                                             Minimum="0"

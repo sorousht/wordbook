@@ -2,15 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive.Concurrency;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using ReactiveUI;
 using Wordbook.Data;
 using Wordbook.Properties;
+using Wordbook.Services;
 
-namespace Wordbook
+namespace Wordbook.Controllers
 {
     public class MainController : ReactiveObject
     {
@@ -20,8 +18,8 @@ namespace Wordbook
 
         private readonly Dictionary<int, DateTime> _timeRanges = new Dictionary<int, DateTime>
         {
-            {0, DateTime.Now.AddDays(-1).Date},
-            {1, DateTime.Now.AddDays(-2).Date},
+            {0, DateTime.Now.Date},
+            {1, DateTime.Now.AddDays(-1).Date},
             {2, DateTime.Now.AddDays(-7).Date},
             {3, DateTime.Now.AddMonths(-1).Date},
             {4, DateTime.Now.AddMonths(-6).Date},
@@ -188,24 +186,10 @@ namespace Wordbook
         public ObservableCollection<Word> Words
         {
             get { return this._words; }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref this._words, value);
-                if (this.Words != null)
-                {
-                    this.Words.CollectionChanged += (sender, args) =>
-                    {
-                        this.RaisePropertyChanged("WordsCount");
-                    };
-                }
-                this.RaisePropertyChanged("WordsCount");
-            }
+            set { this.RaiseAndSetIfChanged(ref this._words, value); }
         }
 
-        public string WordsCount { get { return string.Format("{0} items.", this.Words != null ? this.Words.Count : 0); } }
-
         private Word _word;
-
         public Word Word
         {
             get { return this._word; }
@@ -283,7 +267,11 @@ namespace Wordbook
 
         private ObservableCollection<Word> SearchWords(string keyword, DateTime range)
         {
-            return new ObservableCollection<Word>(Context.GetWords(keyword, range));
+            var words = new ObservableCollection<Word>(Context.GetWords(keyword, range));
+
+            InteractionService.Notify(new NotifyOptions(States.WordsLoaded, words.Count));
+
+            return words;
         }
 
         private void Save()
@@ -295,11 +283,15 @@ namespace Wordbook
                 this.Context.UpdateWord(word);
 
                 this.ResetWord(word);
+
+                InteractionService.Notify(new NotifyOptions(States.WordUpdated, this.WordText));
             }
             else
             {
                 this.Context.AddWord(this.Word);
                 this.Words.Add(this.Word);
+
+                InteractionService.Notify(new NotifyOptions(States.WordAdded, this.WordText));
             }
         }
 
@@ -317,11 +309,14 @@ namespace Wordbook
         {
             var index = this.Words.IndexOf(this.Word);
 
+            var text = this.WordText;
             this.Context.Remove(this.Word);
 
             this.Words.Remove(this.Word);
 
             this.SelectNextWord(index);
+
+            InteractionService.Notify(new NotifyOptions(States.WordRemoved, text));
         }
 
         private void SelectNextWord(int index)

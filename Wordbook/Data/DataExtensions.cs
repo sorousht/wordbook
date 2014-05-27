@@ -8,7 +8,6 @@ namespace Wordbook.Data
 {
     public static class DataExtensions
     {
-        private static readonly int MaxItemsCount = 999;
         public static IEnumerable<Word> SelectAsWord(this IEnumerable<XElement> elements)
         {
             return elements.Select(word => new Word(

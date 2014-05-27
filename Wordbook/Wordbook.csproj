@@ -87,11 +87,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Services\NotifyOptions.cs" />
+    <Compile Include="Services\States.cs" />
     <Compile Include="Controls\CustomToolTipSlider.cs" />
     <Compile Include="Converters\SizeRatioConverter.cs" />
     <Compile Include="Converters\TimePeriodValueToLableConverter.cs" />
-    <Compile Include="MainController.cs" />
+    <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Data\DataExtensions.cs" />
+    <Compile Include="Services\EventAggrigator.cs" />
+    <Compile Include="Services\InteractionService.cs" />
     <Page Include="Global.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -138,11 +142,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="db.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\wordbook.ico" />
