@@ -62,6 +62,10 @@ namespace Wordbook
 
                 this.CreateWordCommand = new ReactiveCommand();
 
+                this.SwitchEditModeCommand = new ReactiveCommand();
+                this.SwitchEditModeCommand.Subscribe(SwitchEditMode);
+
+
                 this.SaveCommand.Subscribe(_ => this.Save());
 
                 this.RemoveCommand.Subscribe(_ => this.Remove());
@@ -169,6 +173,13 @@ namespace Wordbook
             set { this.RaiseAndSetIfChanged(ref this._createWord, value); }
         }
 
+        private ReactiveCommand _switchEditModeCommand;
+
+        public ReactiveCommand SwitchEditModeCommand
+        {
+            get { return this._switchEditModeCommand; }
+            set { this.RaiseAndSetIfChanged(ref this._switchEditModeCommand, value); }
+        }
         #endregion
 
         private XmlContext Context { get; set; }
@@ -334,6 +345,11 @@ namespace Wordbook
             };
 
             this.IsEditMode = true;
+        }
+
+        private void SwitchEditMode(object parameter)
+        {
+            this.IsEditMode = Convert.ToBoolean(parameter);
         }
     }
 }

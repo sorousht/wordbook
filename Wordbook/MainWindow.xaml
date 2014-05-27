@@ -16,6 +16,7 @@
                       MaxWidth="600"
                       FontFamily="Segoe UI"
                       FontSize="14"
+                      IsTabStop="False"
                       GlowBrush="{DynamicResource AccentColorBrush}">
     <Window.DataContext>
         <local:MainController/>
@@ -43,7 +44,7 @@
                              Position="Right" 
                              Theme="Dark" 
                              Width="{Binding ElementName=Window,Path=ActualWidth,Converter={StaticResource RatioConverter},ConverterParameter=0.64}"
-                             IsOpen="{Binding IsEditMode}">
+                             IsOpen="{Binding IsEditMode}" IsOpenChanged="EditFlyout_OnIsOpenChanged">
                 <Grid Margin="6">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="42"/>
@@ -77,10 +78,14 @@
                              FontSize="15"
                              TextWrapping="Wrap"
                              AcceptsReturn="True"
-                             AcceptsTab="True"
                              VerticalScrollBarVisibility="Auto"
                              HorizontalScrollBarVisibility="Hidden"
-                             controls:TextboxHelper.Watermark="Defenition"/>
+                             controls:TextboxHelper.Watermark="Defenition">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding SaveCommand}"/>
+                            <KeyBinding Key="Escape" Command="{Binding SwitchEditModeCommand}" CommandParameter="False"/>
+                        </TextBox.InputBindings>
+                    </TextBox>
                     <WrapPanel Grid.Column="0" 
                                Grid.Row="2" 
                                Grid.ColumnSpan="2">
@@ -107,7 +112,7 @@
             </controls:Flyout>
         </controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>
-    
+
     <Grid Margin="6">
         <Grid.RowDefinitions>
             <RowDefinition Height="36"/>
@@ -139,17 +144,20 @@
                  AcceptsReturn="False"
                  Margin="6,0,0,0">
         </TextBox>
-        <ScrollViewer Grid.Row="1" 
-                      Grid.Column="0"
-                      Grid.ColumnSpan="3"
-                      HorizontalScrollBarVisibility="Hidden" 
-                      VerticalScrollBarVisibility="Auto"
-                      Margin="0,10,0,0">
-            <ListBox ItemsSource="{Binding Words}"
+        <ListBox Name="WordsListBox" 
+                 Grid.Row="1" 
+                 Grid.Column="0"
+                 Grid.ColumnSpan="3"
+                 Margin="0,10,0,0"
+                 ItemsSource="{Binding Words}"
                  SelectedItem="{Binding Word}"
-                 ItemTemplate="{StaticResource WordListItemDataTemplate}">
-            </ListBox>
-        </ScrollViewer>
+                 ItemTemplate="{StaticResource WordListItemDataTemplate}"
+                 ScrollViewer.HorizontalScrollBarVisibility="Hidden" 
+                 ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ListBox.InputBindings>
+                <KeyBinding Key="Delete" Command="{Binding RemoveCommand}"/>
+            </ListBox.InputBindings>
+        </ListBox>
         <TextBlock Grid.Row="2"
                    Grid.ColumnSpan="2"
                    Grid.Column="0"
