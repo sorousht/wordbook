@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Media.Animation;
 using MahApps.Metro.Controls;
 using Wordbook.Properties;
 using Wordbook.Services;
@@ -29,6 +30,7 @@ namespace Wordbook
                 if (options != null)
                 {
                     this.StatusTextBlock.Text = string.Format(Messages[options.State], options.Parameter);
+                    ((Storyboard)this.StatusTextBlock.Resources["TextChangeStoryboard"]).Begin();
                 }
             }));
         }

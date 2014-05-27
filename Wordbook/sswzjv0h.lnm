@@ -32,6 +32,13 @@
         </DataTemplate>
     </Window.Resources>
 
+    <Storyboard x:Name="StatusStoryboard">
+        <DoubleAnimation Duration="0:0:2" 
+                             Storyboard.TargetProperty="Opacity" 
+                             From="1" To="0" 
+                             AccelerationRatio="0.1"/>
+    </Storyboard>
+
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding InitializeCommand}"/>
@@ -166,14 +173,6 @@
                    FontSize="12"
                    Foreground="{DynamicResource GrayBrush4}"
                    VerticalAlignment="Center">
-            <TextBlock.Resources>
-                <Storyboard x:Key="TextChangeStoryboard" TargetName="StatusTextBlock" BeginTime="0:0:4">
-                    <DoubleAnimation Duration="0:0:2"
-                             Storyboard.TargetProperty="Opacity" 
-                             From="1" To="0" 
-                             AccelerationRatio="0.4"/>
-                </Storyboard>
-            </TextBlock.Resources>
         </TextBlock>
         <customControls:CustomToolTipSlider Grid.Row="2"
                                             Grid.Column="2"
