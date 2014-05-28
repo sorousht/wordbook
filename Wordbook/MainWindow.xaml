@@ -73,7 +73,7 @@
                     <TextBox Grid.Column="0" 
                              Grid.Row="1" 
                              Grid.ColumnSpan="2" 
-                             Text="{Binding WordDefinition}" 
+                             Text="{Binding WordDefinition,UpdateSourceTrigger=PropertyChanged}" 
                              Padding="4"
                              Margin="4"
                              FontSize="15"

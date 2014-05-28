@@ -12,13 +12,12 @@ namespace Wordbook
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        private static readonly IDictionary<States, string> Messages = new Dictionary<States, string>
-        {
-            {States.WordAdded, "{0} added."},
-            {States.WordRemoved,"{0} removed."},
-            {States.WordUpdated,"{0} updated."},
-            {States.WordsLoaded,"{0} words found."},
-        };
+        private static readonly string WordAddedMessage = "\"{0}\" has been added.";
+        private static readonly string WordRemovedMessage = "\"{0}\" was removed.";
+        private static readonly string WordUpdatedMessage = "\"{0}\" has been updated.";
+        private static readonly string WordsLoaded = "{0} words was found.";
+        private static readonly string AWordFound = "only one word was found.";
+        private static readonly string NoWord = "there isn't any word!";
 
         public MainWindow()
         {
@@ -29,7 +28,37 @@ namespace Wordbook
                 var options = parameter as NotifyOptions;
                 if (options != null)
                 {
-                    this.StatusTextBlock.Text = string.Format(Messages[options.State], options.Parameter);
+                    switch (options.State)
+                    {
+                        case States.WordAdded:
+                            this.StatusTextBlock.Text = string.Format(WordAddedMessage, options.Parameter);
+                            break;
+                        case States.WordRemoved:
+                            this.StatusTextBlock.Text = string.Format(WordRemovedMessage, options.Parameter);
+                            break;
+                        case States.WordUpdated:
+                            this.StatusTextBlock.Text = string.Format(WordUpdatedMessage, options.Parameter);
+                            break;
+                        case States.WordsLoaded:
+                            var count = Convert.ToInt32(options.Parameter);
+                            if (count == 0)
+                            {
+                                this.StatusTextBlock.Text = NoWord;
+                            }
+                            else if (count == 1)
+                            {
+                                this.StatusTextBlock.Text = AWordFound;
+                            }
+                            else
+                            {
+                                this.StatusTextBlock.Text = string.Format(WordsLoaded, count);
+                            }
+
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
                     var storyboard = ((Storyboard)this.StatusTextBlock.Resources["TextChangeStoryboard"]);
                     storyboard.SkipToFill();
                     storyboard.Begin();
