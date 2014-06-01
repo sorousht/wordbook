@@ -50,6 +50,7 @@
       <HintPath>..\packages\reactiveui-platforms.5.5.1\lib\net45\ReactiveUI.Xaml.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Reactive.Core">
@@ -87,6 +88,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Services\ApplicationSettings.cs" />
     <Compile Include="Services\NotifyOptions.cs" />
     <Compile Include="Services\States.cs" />
     <Compile Include="Controls\CustomToolTipSlider.cs" />

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using ReactiveUI;
 using Wordbook.Data;
 using Wordbook.Properties;
@@ -13,8 +15,6 @@ namespace Wordbook.Controllers
     public class MainController : ReactiveObject
     {
         #region Constants
-
-        private readonly string DbFileName = "db.xml";
 
         private readonly Dictionary<int, DateTime> _timeRanges = new Dictionary<int, DateTime>
         {
@@ -41,7 +41,11 @@ namespace Wordbook.Controllers
             {
                 this.IsInitializing = true;
 
-                this.Context = new XmlContext(DbFileName);
+                var dbFilePath = ApplicationSettings.IsDbFilePathAbsolute
+                    ? ApplicationSettings.DbFilePath
+                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ApplicationSettings.DbFilePath);
+
+                this.Context = new XmlContext(dbFilePath);
 
                 this.TimePeriod = this.ChosenTimePeriod;
 

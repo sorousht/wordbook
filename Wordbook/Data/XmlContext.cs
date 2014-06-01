@@ -11,7 +11,8 @@ namespace Wordbook.Data
     {
         public XmlContext(string uri)
         {
-            this.FilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, uri);
+            this.FilePath = uri;
+
             if (!File.Exists(this.FilePath))
             {
                 this.CreateFile(this.FilePath);
@@ -41,7 +42,7 @@ namespace Wordbook.Data
                        let word = element.AsWord()
                        where word.Text.StartsWith(keyword, StringComparison.OrdinalIgnoreCase) &&
                              word.Registered > date
-                       orderby word.Registered descending
+                       orderby word.Text ascending
                        select word;
 
             }
@@ -50,7 +51,7 @@ namespace Wordbook.Data
                 return from element in this.Document.Words().WordsList()
                        let word = element.AsWord()
                        where word.Registered > date
-                       orderby word.Registered descending
+                       orderby word.Text ascending
                        select word;
 
             }

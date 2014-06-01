@@ -34,6 +34,7 @@ using System.Windows.Shell;
 using Wordbook;
 using Wordbook.Controllers;
 using Wordbook.Controls;
+using Wordbook.Converters;
 using Wordbook.Data;
 
 
