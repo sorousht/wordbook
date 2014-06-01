@@ -63,13 +63,21 @@
                              Padding="4,0,0,0"
                              FontSize="15"
                              VerticalContentAlignment="Center"
-                             controls:TextboxHelper.Watermark="Text"/>
+                             controls:TextboxHelper.Watermark="Text">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Escape" Command="{Binding SwitchEditModeCommand}" CommandParameter="False"/>
+                        </TextBox.InputBindings>
+                    </TextBox>
                     <ComboBox Grid.Column="1" 
                               Grid.Row="0" 
                               ItemsSource="{Binding WordTypes}" 
                               SelectedItem="{Binding WordType}" 
                               VerticalContentAlignment="Center"
-                              Margin="4"/>
+                              Margin="4">
+                        <ComboBox.InputBindings>
+                            <KeyBinding Key="Escape" Command="{Binding SwitchEditModeCommand}" CommandParameter="False"/>
+                        </ComboBox.InputBindings>
+                    </ComboBox>
                     <TextBox Grid.Column="0" 
                              Grid.Row="1" 
                              Grid.ColumnSpan="2" 
@@ -83,7 +91,6 @@
                              HorizontalScrollBarVisibility="Hidden"
                              controls:TextboxHelper.Watermark="Defenition">
                         <TextBox.InputBindings>
-                            <KeyBinding Key="Enter" Command="{Binding SaveCommand}"/>
                             <KeyBinding Key="Escape" Command="{Binding SwitchEditModeCommand}" CommandParameter="False"/>
                         </TextBox.InputBindings>
                     </TextBox>
@@ -157,6 +164,7 @@
                  ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListBox.InputBindings>
                 <KeyBinding Key="Delete" Command="{Binding RemoveCommand}"/>
+                <KeyBinding Key="Escape" Command="{Binding SwitchEditModeCommand}" CommandParameter="False"/>
             </ListBox.InputBindings>
         </ListBox>
         <TextBlock Name="StatusTextBlock" 

@@ -289,7 +289,8 @@ namespace Wordbook.Controllers
             else
             {
                 this.Context.AddWord(this.Word);
-                this.Words.Add(this.Word);
+
+                this.Words.Insert(0, this.Word);
 
                 InteractionService.Notify(new NotifyOptions(States.WordAdded, this.WordText));
             }
