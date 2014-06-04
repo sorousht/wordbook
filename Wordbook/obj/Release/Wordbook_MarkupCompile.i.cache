@@ -10,11 +10,11 @@ none
 false
 TRACE
 E:\Workspace\Wordbook\Wordbook\App.xaml
-21107516855
+6890516125
 
-21174465702
+321435062307
 241847001389
-Global.xaml;MainWindow.xaml;
+Global.xaml;MainWindow.xaml;Views\Edit.xaml;Views\Settings.xaml;Views\Words.xaml;Views\WordsFilter.xaml;
 
 False
 

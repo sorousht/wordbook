@@ -88,8 +88,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controllers\ControllerLocator.cs" />
+    <Compile Include="Controllers\SettingsController.cs" />
+    <Compile Include="Controllers\WordsController.cs" />
     <Compile Include="Services\ApplicationSettings.cs" />
+    <Compile Include="Services\FlyoutOptions.cs" />
+    <Compile Include="Services\NavigateOptions.cs" />
     <Compile Include="Services\NotifyOptions.cs" />
+    <Compile Include="Services\Routes.cs" />
     <Compile Include="Services\States.cs" />
     <Compile Include="Controls\CustomToolTipSlider.cs" />
     <Compile Include="Converters\SizeRatioConverter.cs" />
@@ -98,6 +104,19 @@
     <Compile Include="Data\DataExtensions.cs" />
     <Compile Include="Services\EventAggrigator.cs" />
     <Compile Include="Services\InteractionService.cs" />
+    <Compile Include="Views\Settings.xaml.cs">
+      <DependentUpon>Settings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ViewLocator.cs" />
+    <Compile Include="Views\Edit.xaml.cs">
+      <DependentUpon>Edit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Words.xaml.cs">
+      <DependentUpon>Words.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WordsFilter.xaml.cs">
+      <DependentUpon>WordsFilter.xaml</DependentUpon>
+    </Compile>
     <Page Include="Global.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -116,6 +135,22 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\Edit.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Words.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\WordsFilter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

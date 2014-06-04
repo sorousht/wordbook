@@ -1,0 +1,82 @@
+﻿<UserControl x:Class="Wordbook.Views.Edit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:controllers="clr-namespace:Wordbook.Controllers"
+             mc:Ignorable="d" 
+             DataContext="{x:Static controllers:ControllerLocator.WordsController}"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid Margin="6">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="42"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="56"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="124"/>
+        </Grid.ColumnDefinitions>
+        <TextBox Grid.Column="0" 
+                             Grid.Row="0" 
+                             Text="{Binding WordText,UpdateSourceTrigger=PropertyChanged}"
+                             Margin="4"
+                             Padding="4,0,0,0"
+                             FontSize="15"
+                             VerticalContentAlignment="Center"
+                             controls:TextboxHelper.Watermark="Text">
+            <TextBox.InputBindings>
+                <KeyBinding Key="Escape" Command="{Binding SwitchEditModeCommand}" CommandParameter="False"/>
+            </TextBox.InputBindings>
+        </TextBox>
+        <ComboBox Grid.Column="1" 
+                              Grid.Row="0" 
+                              ItemsSource="{Binding WordTypes}" 
+                              SelectedItem="{Binding WordType}" 
+                              VerticalContentAlignment="Center"
+                              Margin="4">
+            <ComboBox.InputBindings>
+                <KeyBinding Key="Escape" Command="{Binding SwitchEditModeCommand}" CommandParameter="False"/>
+            </ComboBox.InputBindings>
+        </ComboBox>
+        <TextBox Grid.Column="0" 
+                             Grid.Row="1" 
+                             Grid.ColumnSpan="2" 
+                             Text="{Binding WordDefinition,UpdateSourceTrigger=PropertyChanged}" 
+                             Padding="4"
+                             Margin="4"
+                             FontSize="15"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             VerticalScrollBarVisibility="Auto"
+                             HorizontalScrollBarVisibility="Hidden"
+                             controls:TextboxHelper.Watermark="Defenition">
+            <TextBox.InputBindings>
+                <KeyBinding Key="Escape" Command="{Binding SwitchEditModeCommand}" CommandParameter="False"/>
+            </TextBox.InputBindings>
+        </TextBox>
+        <WrapPanel Grid.Column="0" 
+                               Grid.Row="2" 
+                               Grid.ColumnSpan="2">
+            <Button Width="48" Height="48"
+                                Style="{StaticResource MetroCircleButtonStyle}" 
+                                Command="{Binding SaveCommand}">
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource Icons.Save}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+            <Button Width="48" Height="48"
+                                Style="{StaticResource MetroCircleButtonStyle}" 
+                                Command="{Binding RemoveCommand}">
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource Icons.Remove}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+        </WrapPanel>
+    </Grid>
+</UserControl>

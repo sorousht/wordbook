@@ -13,10 +13,32 @@ namespace Wordbook.Services
         {
             EventAggrigator.Publish(Interactions.Notify, options);
         }
+
+        public static void OpenFlyout(Routes route)
+        {
+            EventAggrigator.Publish(Interactions.Navigate, new NavigateOptions(Routes.Edit)
+            {
+                Parameter = FlyoutOptions.Open()
+            });
+        }
+
+        public static void CloseFlyout()
+        {
+            EventAggrigator.Publish(Interactions.Navigate, new NavigateOptions(Routes.Edit)
+            {
+                Parameter = FlyoutOptions.Close()
+            });
+        }
+
+        public static void Navigate(Routes route)
+        {
+            EventAggrigator.Publish(Interactions.Navigate, new NavigateOptions(route));
+        }
     }
 
     public enum Interactions
     {
-        Notify
+        Notify,
+        Navigate
     }
 }

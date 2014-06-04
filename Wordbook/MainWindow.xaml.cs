@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Windows.Input;
 using System.Windows.Media.Animation;
 using MahApps.Metro.Controls;
-using Wordbook.Properties;
 using Wordbook.Services;
+using Wordbook.Views;
 
 namespace Wordbook
 {
@@ -18,7 +18,6 @@ namespace Wordbook
         private static readonly string WordsLoaded = "{0} words was found.";
         private static readonly string AWordFound = "only one word was found.";
         private static readonly string NoWord = "there isn't any word!";
-
         public MainWindow()
         {
             InitializeComponent();
@@ -64,17 +63,52 @@ namespace Wordbook
                     storyboard.Begin();
                 }
             }));
+
+            InteractionService.On(Interactions.Navigate, parameter =>
+            {
+                var options = parameter as NavigateOptions;
+                if (options != null)
+                {
+                    if (options.Route == Routes.Words)
+                    {
+                        this.MainContentControl.Content = ViewLocator.WordsView;
+                        this.StatusBarContentControl.Content = ViewLocator.WordsFilterView;
+                    }
+                    else if (options.Route == Routes.Edit)
+                    {
+                        var flyoutOptions = options.Parameter as FlyoutOptions;
+                        if (flyoutOptions != null)
+                        {
+                            if (flyoutOptions.IsOpen)
+                            {
+                                this.MainFlyout.Header = "Edit";
+                                this.MainFlyout.Content = ViewLocator.EditView;
+                                this.MainFlyout.IsOpen = true;
+                            }
+                            else
+                            {
+                                this.MainFlyout.IsOpen = false;
+                            }
+                        }
+                    }
+                    else if (options.Route == Routes.Settings)
+                    {
+                        this.MainContentControl.Content = ViewLocator.SettingsView;
+                        this.StatusBarContentControl.Content = null;
+                    }
+                }
+            });
         }
 
-        private void EditFlyout_OnIsOpenChanged(object sender, EventArgs e)
+        private void MainFlyoutOnIsOpenChanged(object sender, EventArgs e)
         {
-            if (this.EditFlyout.IsOpen)
+            if (this.MainFlyout.IsOpen)
             {
-                this.EditFlyout.Focus();
+                this.MainFlyout.Focus();
             }
             else
             {
-                this.WordsListBox.Focus();
+                this.MainContentControl.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
             }
         }
     }

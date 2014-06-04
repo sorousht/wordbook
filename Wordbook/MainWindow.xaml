@@ -8,6 +8,7 @@
                       xmlns:customControls="clr-namespace:Wordbook.Controls"
                       xmlns:controllers="clr-namespace:Wordbook.Controllers"
                       Name="Window"
+                      DataContext="{x:Static controllers:ControllerLocator.MainController}"
                       Title="Wordbook" 
                       Icon="Resources/wordbook.ico"
                       SaveWindowPosition="True"
@@ -19,157 +20,56 @@
                       FontSize="14"
                       IsTabStop="False"
                       GlowBrush="{DynamicResource AccentColorBrush}">
-    <Window.DataContext>
-        <controllers:MainController/>
-    </Window.DataContext>
-    <Window.Resources>
-        <DataTemplate x:Key="WordListItemDataTemplate" 
-                      DataType="{x:Type data:Word}">
-            <WrapPanel>
-                <TextBlock Text="{Binding Text}"/>
-                <TextBlock Text="{Binding Type}" FontSize="10" Foreground="{DynamicResource GrayBrush4}" Margin="8,0,0,0"/>
-            </WrapPanel>
-        </DataTemplate>
-    </Window.Resources>
-
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding InitializeCommand}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
+    <controls:MetroWindow.RightWindowCommands>
+        <controls:WindowCommands>
+            <Button Command="{Binding NavigateSettingsCommand}" ToolTip="Settings">
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="18" 
+                               Height="18"
+                               Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill"
+                                         Visual="{StaticResource Icons.Settings}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </StackPanel>
+            </Button>
+        </controls:WindowCommands>
+    </controls:MetroWindow.RightWindowCommands>
+
     <controls:MetroWindow.Flyouts>
         <controls:FlyoutsControl>
-            <controls:Flyout Name="EditFlyout" 
-                             Header="Edit" 
+            <controls:Flyout Name="MainFlyout" 
                              Position="Right" 
                              Theme="Dark" 
                              Width="{Binding ElementName=Window,Path=ActualWidth,Converter={StaticResource RatioConverter},ConverterParameter=0.64}"
-                             IsOpen="{Binding IsEditMode}" IsOpenChanged="EditFlyout_OnIsOpenChanged">
-                <Grid Margin="6">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="42"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="56"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="124"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBox Grid.Column="0" 
-                             Grid.Row="0" 
-                             Text="{Binding WordText,UpdateSourceTrigger=PropertyChanged}"
-                             Margin="4"
-                             Padding="4,0,0,0"
-                             FontSize="15"
-                             VerticalContentAlignment="Center"
-                             controls:TextboxHelper.Watermark="Text">
-                        <TextBox.InputBindings>
-                            <KeyBinding Key="Escape" Command="{Binding SwitchEditModeCommand}" CommandParameter="False"/>
-                        </TextBox.InputBindings>
-                    </TextBox>
-                    <ComboBox Grid.Column="1" 
-                              Grid.Row="0" 
-                              ItemsSource="{Binding WordTypes}" 
-                              SelectedItem="{Binding WordType}" 
-                              VerticalContentAlignment="Center"
-                              Margin="4">
-                        <ComboBox.InputBindings>
-                            <KeyBinding Key="Escape" Command="{Binding SwitchEditModeCommand}" CommandParameter="False"/>
-                        </ComboBox.InputBindings>
-                    </ComboBox>
-                    <TextBox Grid.Column="0" 
-                             Grid.Row="1" 
-                             Grid.ColumnSpan="2" 
-                             Text="{Binding WordDefinition,UpdateSourceTrigger=PropertyChanged}" 
-                             Padding="4"
-                             Margin="4"
-                             FontSize="15"
-                             TextWrapping="Wrap"
-                             AcceptsReturn="True"
-                             VerticalScrollBarVisibility="Auto"
-                             HorizontalScrollBarVisibility="Hidden"
-                             controls:TextboxHelper.Watermark="Defenition">
-                        <TextBox.InputBindings>
-                            <KeyBinding Key="Escape" Command="{Binding SwitchEditModeCommand}" CommandParameter="False"/>
-                        </TextBox.InputBindings>
-                    </TextBox>
-                    <WrapPanel Grid.Column="0" 
-                               Grid.Row="2" 
-                               Grid.ColumnSpan="2">
-                        <Button Width="48" Height="48"
-                                Style="{StaticResource MetroCircleButtonStyle}" 
-                                Command="{Binding SaveCommand}">
-                            <Rectangle Width="20" Height="20">
-                                <Rectangle.Fill>
-                                    <VisualBrush Visual="{StaticResource Icons.Save}" />
-                                </Rectangle.Fill>
-                            </Rectangle>
-                        </Button>
-                        <Button Width="48" Height="48"
-                                Style="{StaticResource MetroCircleButtonStyle}" 
-                                Command="{Binding RemoveCommand}">
-                            <Rectangle Width="20" Height="20">
-                                <Rectangle.Fill>
-                                    <VisualBrush Visual="{StaticResource Icons.Remove}" />
-                                </Rectangle.Fill>
-                            </Rectangle>
-                        </Button>
-                    </WrapPanel>
-                </Grid>
+                             IsOpenChanged="MainFlyoutOnIsOpenChanged">
+
             </controls:Flyout>
         </controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>
 
     <Grid Margin="6">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="36"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="24"/>
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="36"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="124"/>
         </Grid.ColumnDefinitions>
-        <Button Style="{DynamicResource SquareButtonStyle}" 
-                Command="{Binding CreateWordCommand}"
-                CommandParameter="{Binding ElementName=SearchTextBox,Path=Text}">
-            <Rectangle Width="16" Height="16">
-                <Rectangle.Fill>
-                    <VisualBrush Visual="{StaticResource Icons.Add}" />
-                </Rectangle.Fill>
-            </Rectangle>
-        </Button>
-        <TextBox Name="SearchTextBox"
-                 Grid.Row="0"
-                 Grid.Column="1"
-                 Grid.ColumnSpan="2"
-                 Text="{Binding Keyword,UpdateSourceTrigger=PropertyChanged}" 
-                 controls:TextboxHelper.Watermark="Search" 
-                 controls:TextboxHelper.ClearTextButton="True"
-                 VerticalContentAlignment="Center"
-                 AcceptsReturn="False"
-                 Margin="6,0,0,0">
-        </TextBox>
-        <ListBox Name="WordsListBox" 
-                 Grid.Row="1" 
-                 Grid.Column="0"
-                 Grid.ColumnSpan="3"
-                 Margin="0,10,0,0"
-                 ItemsSource="{Binding Words}"
-                 SelectedItem="{Binding Word}"
-                 ItemTemplate="{StaticResource WordListItemDataTemplate}"
-                 ScrollViewer.HorizontalScrollBarVisibility="Hidden" 
-                 ScrollViewer.VerticalScrollBarVisibility="Auto">
-            <ListBox.InputBindings>
-                <KeyBinding Key="Delete" Command="{Binding RemoveCommand}"/>
-                <KeyBinding Key="Escape" Command="{Binding SwitchEditModeCommand}" CommandParameter="False"/>
-            </ListBox.InputBindings>
-        </ListBox>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="24"/>
+        </Grid.RowDefinitions>
+        <controls:TransitioningContentControl Name="MainContentControl" 
+                                              Grid.Row="0" 
+                                              Grid.Column="0" 
+                                              Grid.ColumnSpan="2"/>
         <TextBlock Name="StatusTextBlock" 
-                   Grid.Row="2"
-                   Grid.ColumnSpan="2"
+                   Grid.Row="1"
                    Grid.Column="0"
                    FontSize="12"
                    Foreground="{DynamicResource GrayBrush4}"
@@ -183,15 +83,9 @@
                 </Storyboard>
             </TextBlock.Resources>
         </TextBlock>
-        <customControls:CustomToolTipSlider Grid.Row="2"
-                                            Grid.Column="2"
-                                            Minimum="0"
-                                            Maximum="5"
-                                            Value="{Binding TimePeriod}"
-                                            AutoToolTipPlacement="TopLeft"
-                                            AutoToolTipContent="{Binding TimePeriod,Converter={StaticResource TimePeriodValueToLableConverter}}"
-                                            AutoTooltipVerticalOffset="-6"
-                                            Style="{StaticResource FlatSlider}"
-                                            VerticalAlignment="Center"/>
+        <controls:TransitioningContentControl Grid.Row="1" 
+                                              Grid.Column="1" 
+                                              Name="StatusBarContentControl"/>
     </Grid>
+
 </controls:MetroWindow>
