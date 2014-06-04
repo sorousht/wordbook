@@ -83,6 +83,7 @@ namespace Wordbook
                             {
                                 this.MainFlyout.Header = "Edit";
                                 this.MainFlyout.Content = ViewLocator.EditView;
+                                this.MainFlyout.Width = this.GetFlyoutWidth(64);
                                 this.MainFlyout.IsOpen = true;
                             }
                             else
@@ -93,11 +94,29 @@ namespace Wordbook
                     }
                     else if (options.Route == Routes.Settings)
                     {
-                        this.MainContentControl.Content = ViewLocator.SettingsView;
-                        this.StatusBarContentControl.Content = null;
+                        var flyoutOptions = options.Parameter as FlyoutOptions;
+                        if (flyoutOptions != null)
+                        {
+                            if (flyoutOptions.IsOpen)
+                            {
+                                this.MainFlyout.Header = "Settings";
+                                this.MainFlyout.Content = ViewLocator.SettingsView;
+                                this.MainFlyout.Width = this.GetFlyoutWidth(100);
+                                this.MainFlyout.IsOpen = true;
+                            }
+                            else
+                            {
+                                this.MainFlyout.IsOpen = false;
+                            }
+                        }
                     }
                 }
             });
+        }
+
+        private double GetFlyoutWidth(int ratio)
+        {
+            return (ratio * this.Window.ActualWidth) / 100;
         }
 
         private void MainFlyoutOnIsOpenChanged(object sender, EventArgs e)

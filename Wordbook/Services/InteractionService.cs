@@ -16,7 +16,7 @@ namespace Wordbook.Services
 
         public static void OpenFlyout(Routes route)
         {
-            EventAggrigator.Publish(Interactions.Navigate, new NavigateOptions(Routes.Edit)
+            EventAggrigator.Publish(Interactions.Navigate, new NavigateOptions(route)
             {
                 Parameter = FlyoutOptions.Open()
             });
@@ -24,7 +24,7 @@ namespace Wordbook.Services
 
         public static void CloseFlyout()
         {
-            EventAggrigator.Publish(Interactions.Navigate, new NavigateOptions(Routes.Edit)
+            EventAggrigator.Publish(Interactions.Navigate, new NavigateOptions(Routes.None)
             {
                 Parameter = FlyoutOptions.Close()
             });

@@ -17,7 +17,7 @@ namespace Wordbook.Controllers
             InteractionService.Navigate(Routes.Words);
 
             this.NavigateSettingsCommand = new ReactiveCommand();
-            this.NavigateSettingsCommand.Subscribe(_ => InteractionService.Navigate(Routes.Settings));
+            this.NavigateSettingsCommand.Subscribe(_ => InteractionService.OpenFlyout(Routes.Settings));
         }
 
         public ReactiveCommand InitializeCommand { get; set; }

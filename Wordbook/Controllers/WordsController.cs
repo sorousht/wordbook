@@ -99,7 +99,7 @@ namespace Wordbook.Controllers
                     }
                 });
 
-                if (this.Words != null)
+                if (this.Words != null && this.Words.Any())
                 {
                     this.Word = this.Words.SingleOrDefault(word => word.Registered == this.ChosenWordRegisteredSetting) ??
                                 this.Words.FirstOrDefault();

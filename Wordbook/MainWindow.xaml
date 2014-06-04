@@ -48,7 +48,6 @@
             <controls:Flyout Name="MainFlyout" 
                              Position="Right" 
                              Theme="Dark" 
-                             Width="{Binding ElementName=Window,Path=ActualWidth,Converter={StaticResource RatioConverter},ConverterParameter=0.64}"
                              IsOpenChanged="MainFlyoutOnIsOpenChanged">
 
             </controls:Flyout>
