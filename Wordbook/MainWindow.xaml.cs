@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using MahApps.Metro.Controls;
+using Wordbook.Converters;
 using Wordbook.Services;
 using Wordbook.Views;
 
@@ -17,7 +20,7 @@ namespace Wordbook
         private static readonly string WordUpdatedMessage = "\"{0}\" has been updated.";
         private static readonly string WordsLoaded = "{0} words was found.";
         private static readonly string AWordFound = "only one word was found.";
-        private static readonly string NoWord = "there isn't any word!";
+        private static readonly string NoWord = "no words!";
         public MainWindow()
         {
             InitializeComponent();
@@ -81,9 +84,17 @@ namespace Wordbook
                         {
                             if (flyoutOptions.IsOpen)
                             {
+                                var binding = new Binding("ActualWidth")
+                                {
+                                    Source = this.Window,
+                                    Converter = new SizeRatioConverter(),
+                                    ConverterParameter = 0.64,
+                                };
+                                this.MainFlyout.SetBinding(FrameworkElement.WidthProperty, binding);
+
+
                                 this.MainFlyout.Header = "Edit";
                                 this.MainFlyout.Content = ViewLocator.EditView;
-                                this.MainFlyout.Width = this.GetFlyoutWidth(64);
                                 this.MainFlyout.IsOpen = true;
                             }
                             else
@@ -99,9 +110,16 @@ namespace Wordbook
                         {
                             if (flyoutOptions.IsOpen)
                             {
+                                var binding = new Binding("ActualWidth")
+                                {
+                                    Source = this.Window,
+                                    Converter = new SizeRatioConverter(),
+                                    ConverterParameter = 1,
+                                };
+                                this.MainFlyout.SetBinding(FrameworkElement.WidthProperty, binding);
+
                                 this.MainFlyout.Header = "Settings";
                                 this.MainFlyout.Content = ViewLocator.SettingsView;
-                                this.MainFlyout.Width = this.GetFlyoutWidth(100);
                                 this.MainFlyout.IsOpen = true;
                             }
                             else
@@ -112,11 +130,6 @@ namespace Wordbook
                     }
                 }
             });
-        }
-
-        private double GetFlyoutWidth(int ratio)
-        {
-            return (ratio * this.Window.ActualWidth) / 100;
         }
 
         private void MainFlyoutOnIsOpenChanged(object sender, EventArgs e)
