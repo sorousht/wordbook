@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using MahApps.Metro;
+using Wordbook.Data;
 
 namespace Wordbook
 {
@@ -17,6 +18,31 @@ namespace Wordbook
     {
         Semaphore _semaphore;
         bool _shouldRelease = false;
+
+        public App()
+        {
+            if (SettingService.Current != null)
+            {
+                if (string.IsNullOrWhiteSpace(SettingService.Current.CurrentDatabase))
+                {
+                    if (SettingService.Current.Databases == null || SettingService.Current.Databases.Count == 0)
+                    {
+                        var defaultDatabase = ConfigurationManager.AppSettings["DefaultDatabaseName"];
+
+                        if (string.IsNullOrWhiteSpace(defaultDatabase))
+                        {
+                            throw new Exception("Could not find default database");
+                        }
+
+                        SettingService.Current.Databases = new[] { defaultDatabase };
+                    }
+
+                    SettingService.Current.CurrentDatabase = SettingService.Current.Databases[0];
+                    SettingService.Save();
+                }
+            }
+        }
+
 
         protected override void OnStartup(StartupEventArgs e)
         {

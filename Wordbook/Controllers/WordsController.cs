@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using ReactiveUI;
 using Wordbook.Data;
 using Wordbook.Properties;
@@ -40,11 +41,7 @@ namespace Wordbook.Controllers
             {
                 this.IsInitializing = true;
 
-                var dbFilePath = ApplicationSettings.IsDbFilePathAbsolute
-                    ? ApplicationSettings.DbFilePath
-                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ApplicationSettings.DbFilePath);
-
-                this.Context = new XmlContext(dbFilePath);
+                this.Context = new WordService(SettingService.Current.CurrentDatabase);
 
                 this.TimePeriod = this.ChosenTimePeriod;
 
@@ -89,6 +86,8 @@ namespace Wordbook.Controllers
                 {
                     if (!this.IsInitializing && word.Value != null)
                     {
+                        InteractionService.OpenFlyout(Routes.Edit);
+
                         this.RaisePropertyChanged("WordText");
                         this.RaisePropertyChanged("WordDefinition");
                         this.RaisePropertyChanged("WordType");
@@ -96,6 +95,7 @@ namespace Wordbook.Controllers
                         this.ChosenWordRegisteredSetting = word.Value.Registered.HasValue
                             ? word.Value.Registered.Value
                             : DateTime.Today;
+
                     }
                 });
 
@@ -106,6 +106,19 @@ namespace Wordbook.Controllers
                 }
 
                 this.IsInitializing = false;
+            });
+
+            EventAggrigator.Subscribe("CurrentDatabaseChanged", parameter =>
+            {
+                if (parameter != null)
+                {
+                    var currentDatabase = parameter.ToString();
+                    if (!string.IsNullOrWhiteSpace(currentDatabase))
+                    {
+                        this.Context = new WordService(currentDatabase);
+                        this.Words = this.SearchWords(this.Keyword, this._timeRanges[this.TimePeriod]);
+                    }
+                }
             });
         }
 
@@ -181,7 +194,7 @@ namespace Wordbook.Controllers
         }
         #endregion
 
-        private XmlContext Context { get; set; }
+        private WordService Context { get; set; }
 
         private ObservableCollection<Word> _words;
         public ObservableCollection<Word> Words
@@ -258,7 +271,7 @@ namespace Wordbook.Controllers
 
         private ObservableCollection<Word> SearchWords(string keyword, DateTime range)
         {
-            var words = new ObservableCollection<Word>(Context.GetWords(keyword, range));
+            var words = new ObservableCollection<Word>(Context.Search(keyword, range));
 
             InteractionService.Notify(new NotifyOptions(States.WordsLoaded, words.Count));
 
@@ -269,11 +282,9 @@ namespace Wordbook.Controllers
         {
             if (this.Context.Exists(this.Word))
             {
-                var word = this.Word;
+                this.ResetWord(this.Word);
 
-                this.Context.UpdateWord(word);
-
-                this.ResetWord(word);
+                this.Context.Save();
 
                 InteractionService.Notify(new NotifyOptions(States.WordUpdated, this.WordText));
             }

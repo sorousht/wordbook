@@ -40,6 +40,10 @@
     <Reference Include="MahApps.Metro">
       <HintPath>..\packages\MahApps.Metro.0.13.1.0\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="ReactiveUI">
       <HintPath>..\packages\reactiveui-core.5.5.1\lib\Portable-Net45+WinRT45+WP8\ReactiveUI.dll</HintPath>
     </Reference>
@@ -91,7 +95,9 @@
     <Compile Include="Controllers\ControllerLocator.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\WordsController.cs" />
-    <Compile Include="Services\ApplicationSettings.cs" />
+    <Compile Include="Data\SettingService.cs" />
+    <Compile Include="Data\Setting.cs" />
+    <Compile Include="Data\WordType.cs" />
     <Compile Include="Services\FlyoutOptions.cs" />
     <Compile Include="Services\NavigateOptions.cs" />
     <Compile Include="Services\NotifyOptions.cs" />
@@ -101,7 +107,6 @@
     <Compile Include="Converters\SizeRatioConverter.cs" />
     <Compile Include="Converters\TimePeriodValueToLableConverter.cs" />
     <Compile Include="Controllers\MainController.cs" />
-    <Compile Include="Data\DataExtensions.cs" />
     <Compile Include="Services\EventAggrigator.cs" />
     <Compile Include="Services\InteractionService.cs" />
     <Compile Include="Views\Settings.xaml.cs">
@@ -130,7 +135,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\Word.cs" />
-    <Compile Include="Data\XmlContext.cs" />
+    <Compile Include="Data\WordService.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

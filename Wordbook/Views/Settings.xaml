@@ -4,10 +4,37 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:controllers="clr-namespace:Wordbook.Controllers"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              mc:Ignorable="d" 
              DataContext="{x:Static controllers:ControllerLocator.SettingsController}"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-            
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding InitializeCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="28"/>
+            <RowDefinition Height="42"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Column="0" Grid.Row="0" Text="Database" FontSize="16" VerticalAlignment="Center"/>
+        <Grid Grid.Column="0" Grid.Row="1" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="38"/>
+            </Grid.ColumnDefinitions>
+            <ComboBox Grid.Column="0" ItemsSource="{Binding Databases}" SelectedItem="{Binding SelectedDatabase}" Height="32"/>
+            <Button Grid.Column="1" Style="{DynamicResource SquareButtonStyle}" Command="{Binding AddDatabaseCommand}" ToolTip="Add a new database" HorizontalAlignment="Right" Width="32" Height="32">
+                <Rectangle Width="16" Height="16">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource Icons.Add}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+        </Grid>
     </Grid>
 </UserControl>

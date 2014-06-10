@@ -84,18 +84,21 @@ namespace Wordbook
                         {
                             if (flyoutOptions.IsOpen)
                             {
-                                var binding = new Binding("ActualWidth")
+                                if (!this.MainFlyout.IsOpen)
                                 {
-                                    Source = this.Window,
-                                    Converter = new SizeRatioConverter(),
-                                    ConverterParameter = 0.64,
-                                };
-                                this.MainFlyout.SetBinding(FrameworkElement.WidthProperty, binding);
+                                    var binding = new Binding("ActualWidth")
+                                    {
+                                        Source = this.Window,
+                                        Converter = new SizeRatioConverter(),
+                                        ConverterParameter = 0.64,
+                                    };
+                                    this.MainFlyout.SetBinding(FrameworkElement.WidthProperty, binding);
 
 
-                                this.MainFlyout.Header = "Edit";
-                                this.MainFlyout.Content = ViewLocator.EditView;
-                                this.MainFlyout.IsOpen = true;
+                                    this.MainFlyout.Header = "Edit";
+                                    this.MainFlyout.Content = ViewLocator.EditView;
+                                    this.MainFlyout.IsOpen = true;
+                                }
                             }
                             else
                             {
@@ -114,7 +117,7 @@ namespace Wordbook
                                 {
                                     Source = this.Window,
                                     Converter = new SizeRatioConverter(),
-                                    ConverterParameter = 1,
+                                    ConverterParameter = 0.64,
                                 };
                                 this.MainFlyout.SetBinding(FrameworkElement.WidthProperty, binding);
 

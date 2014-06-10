@@ -39,6 +39,6 @@ namespace Wordbook.Services
     public enum Interactions
     {
         Notify,
-        Navigate
+        Navigate,
     }
 }
