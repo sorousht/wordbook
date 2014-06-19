@@ -12,13 +12,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MahApps.Metro.Controls;
 
 namespace Wordbook.Views
 {
     /// <summary>
     /// Interaction logic for Edit.xaml
     /// </summary>
-    public partial class Edit : UserControl
+    public partial class Edit : MetroContentControl
     {
         public Edit()
         {

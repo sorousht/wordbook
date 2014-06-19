@@ -84,7 +84,7 @@ namespace Wordbook
                         {
                             if (flyoutOptions.IsOpen)
                             {
-                                if (!this.MainFlyout.IsOpen)
+                                if (this.MainFlyout.Header != "Edit")
                                 {
                                     var binding = new Binding("ActualWidth")
                                     {
@@ -113,17 +113,20 @@ namespace Wordbook
                         {
                             if (flyoutOptions.IsOpen)
                             {
-                                var binding = new Binding("ActualWidth")
+                                if (this.MainFlyout.Header != "Settings")
                                 {
-                                    Source = this.Window,
-                                    Converter = new SizeRatioConverter(),
-                                    ConverterParameter = 0.64,
-                                };
-                                this.MainFlyout.SetBinding(FrameworkElement.WidthProperty, binding);
+                                    var binding = new Binding("ActualWidth")
+                                    {
+                                        Source = this.Window,
+                                        Converter = new SizeRatioConverter(),
+                                        ConverterParameter = 0.64,
+                                    };
+                                    this.MainFlyout.SetBinding(FrameworkElement.WidthProperty, binding);
 
-                                this.MainFlyout.Header = "Settings";
-                                this.MainFlyout.Content = ViewLocator.SettingsView;
-                                this.MainFlyout.IsOpen = true;
+                                    this.MainFlyout.Header = "Settings";
+                                    this.MainFlyout.Content = ViewLocator.SettingsView;
+                                    this.MainFlyout.IsOpen = true;
+                                }
                             }
                             else
                             {

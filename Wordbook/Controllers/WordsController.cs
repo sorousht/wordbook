@@ -79,6 +79,10 @@ namespace Wordbook.Controllers
                     .Subscribe(words =>
                     {
                         this.Words = words;
+                        if (this.Words.Count > 0)
+                        {
+                            this.Word = this.Words[0];
+                        }
                     });
 
 
