@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Media;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
+using NAudio.Wave;
 using ReactiveUI;
+using WMPLib;
 using Wordbook.Data;
 using Wordbook.Properties;
 using Wordbook.Services;
@@ -26,10 +31,17 @@ namespace Wordbook.Controllers
             {5, DateTime.Now.AddYears(-1).Date},
         };
 
+        private static readonly string PronounciationApiUri =
+            "http://translate.google.com/translate_tts?ie=UTF-8&tl=en-us&q={0}";
+
+        private readonly IDictionary<string, byte[]> Pronounciations;
+
         #endregion
 
         public WordsController()
         {
+            this.Pronounciations = new Dictionary<string, byte[]>();
+
             this.Word = new Word();
             this.InitializeCommand = new ReactiveCommand();
             this.InitializeCommand.Subscribe(_ => this.Initialize());
@@ -60,6 +72,8 @@ namespace Wordbook.Controllers
 
                 this.CreateWordCommand = new ReactiveCommand();
 
+                this.PronounceCommand = new ReactiveCommand();
+
                 this.SwitchEditModeCommand = new ReactiveCommand();
                 this.SwitchEditModeCommand.Subscribe(SwitchEditMode);
 
@@ -69,6 +83,8 @@ namespace Wordbook.Controllers
                 this.RemoveCommand.Subscribe(_ => this.Remove());
 
                 this.CreateWordCommand.Subscribe(this.Create);
+
+                this.PronounceCommand.Subscribe(Pronounce);
 
                 this.WhenAny(controller => controller.Keyword, controller => controller.TimePeriod,
                     (keyword, period) =>
@@ -108,6 +124,8 @@ namespace Wordbook.Controllers
                     this.Word = this.Words.SingleOrDefault(word => word.Registered == this.ChosenWordRegisteredSetting) ??
                                 this.Words.FirstOrDefault();
                 }
+
+                this.SoundPlayer = new WaveOut();
 
                 this.IsInitializing = false;
             });
@@ -172,7 +190,6 @@ namespace Wordbook.Controllers
             get { return this._saveCommand; }
             set { this.RaiseAndSetIfChanged(ref this._saveCommand, value); }
         }
-
         private ReactiveCommand _removeCommand;
 
         public ReactiveCommand RemoveCommand
@@ -182,7 +199,6 @@ namespace Wordbook.Controllers
         }
 
         private ReactiveCommand _createWord;
-
         public ReactiveCommand CreateWordCommand
         {
             get { return this._createWord; }
@@ -190,13 +206,22 @@ namespace Wordbook.Controllers
         }
 
         private ReactiveCommand _switchEditModeCommand;
-
         public ReactiveCommand SwitchEditModeCommand
         {
             get { return this._switchEditModeCommand; }
             set { this.RaiseAndSetIfChanged(ref this._switchEditModeCommand, value); }
         }
+
+        private ReactiveCommand _pronounceCommand;
+        public ReactiveCommand PronounceCommand
+        {
+            get { return this._pronounceCommand; }
+            set { this.RaiseAndSetIfChanged(ref this._pronounceCommand, value); }
+        }
+
         #endregion
+
+        private WaveOut SoundPlayer { get; set; }
 
         private WordService Context { get; set; }
 
@@ -359,6 +384,38 @@ namespace Wordbook.Controllers
             else
             {
                 InteractionService.CloseFlyout();
+            }
+        }
+
+        private async void Pronounce(object parameter)
+        {
+            byte[] buffer = null;
+
+            if (parameter != null)
+            {
+                var text = parameter.ToString();
+
+                if (this.Pronounciations.ContainsKey(text))
+                {
+                    buffer = this.Pronounciations[text];
+                }
+                else
+                {
+                    using (var client = new WebClient())
+                    {
+                        buffer = await client.DownloadDataTaskAsync(
+                            string.Format(WordsController.PronounciationApiUri, text));
+                    }
+
+                    this.Pronounciations.Add(text, buffer);
+                }
+
+                if (buffer != null && buffer.Length > 0)
+                {
+                    this.SoundPlayer.Stop();
+                    this.SoundPlayer.Init(new Mp3FileReader(new MemoryStream(buffer)));
+                    this.SoundPlayer.Play();
+                }
             }
         }
     }
