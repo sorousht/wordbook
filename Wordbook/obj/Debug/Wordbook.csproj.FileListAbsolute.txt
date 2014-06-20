@@ -34,7 +34,6 @@ E:\Workspace\Wordbook\Wordbook\bin\Debug\System.Reactive.Interfaces.xml
 E:\Workspace\Wordbook\Wordbook\bin\Debug\System.Reactive.Linq.xml
 E:\Workspace\Wordbook\Wordbook\bin\Debug\System.Reactive.PlatformServices.xml
 E:\Workspace\Wordbook\Wordbook\bin\Debug\System.Reactive.Windows.Threading.xml
-E:\Workspace\Wordbook\Wordbook\obj\Debug\Wordbook.csprojResolveAssemblyReference.cache
 E:\Workspace\Wordbook\Wordbook\obj\Debug\Global.baml
 E:\Workspace\Wordbook\Wordbook\obj\Debug\MainWindow.baml
 E:\Workspace\Wordbook\Wordbook\obj\Debug\Views\Edit.baml
@@ -48,3 +47,4 @@ E:\Workspace\Wordbook\Wordbook\bin\Debug\NAudio.dll
 E:\Workspace\Wordbook\Wordbook\bin\Debug\NAudio.xml
 E:\Workspace\Wordbook\Wordbook\obj\Debug\Interop.WMPLib.dll
 E:\Workspace\Wordbook\Wordbook\obj\Debug\Wordbook.csproj.ResolveComReference.cache
+E:\Workspace\Wordbook\Wordbook\obj\Debug\Wordbook.csprojResolveAssemblyReference.cache

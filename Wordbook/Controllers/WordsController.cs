@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Media;
@@ -34,14 +35,10 @@ namespace Wordbook.Controllers
         private static readonly string PronounciationApiUri =
             "http://translate.google.com/translate_tts?ie=UTF-8&tl=en-us&q={0}";
 
-        private readonly IDictionary<string, byte[]> Pronounciations;
-
         #endregion
 
         public WordsController()
         {
-            this.Pronounciations = new Dictionary<string, byte[]>();
-
             this.Word = new Word();
             this.InitializeCommand = new ReactiveCommand();
             this.InitializeCommand.Subscribe(_ => this.Initialize());
@@ -126,6 +123,11 @@ namespace Wordbook.Controllers
                 }
 
                 this.SoundPlayer = new WaveOut();
+
+                var pronounciationFilePath = Path.Combine(Environment.CurrentDirectory,
+                    ConfigurationManager.AppSettings["PronounciationDatabaseName"]);
+
+                this.PronounciationService = new PronounciationService(pronounciationFilePath);
 
                 this.IsInitializing = false;
             });
@@ -225,6 +227,8 @@ namespace Wordbook.Controllers
 
         private WordService Context { get; set; }
 
+        private PronounciationService PronounciationService { get; set; }
+
         private ObservableCollection<Word> _words;
         public ObservableCollection<Word> Words
         {
@@ -319,7 +323,9 @@ namespace Wordbook.Controllers
             }
             else
             {
-                this.Context.AddWord(this.Word);
+                this.Word.Registered = DateTime.Now;
+
+                this.Context.Items.Add(this.Word);
 
                 this.Words.Insert(0, this.Word);
 
@@ -342,7 +348,8 @@ namespace Wordbook.Controllers
             var index = this.Words.IndexOf(this.Word);
 
             var text = this.WordText;
-            this.Context.Remove(this.Word);
+
+            this.Context.Items.Remove(this.Word);
 
             this.Words.Remove(this.Word);
 
@@ -393,28 +400,38 @@ namespace Wordbook.Controllers
 
             if (parameter != null)
             {
-                var text = parameter.ToString();
+                var word = parameter as Word;
 
-                if (this.Pronounciations.ContainsKey(text))
+                if (word != null && word.Registered.HasValue)
                 {
-                    buffer = this.Pronounciations[text];
-                }
-                else
-                {
-                    using (var client = new WebClient())
+                    if (this.PronounciationService.Exists(word.Registered.Value))
                     {
-                        buffer = await client.DownloadDataTaskAsync(
-                            string.Format(WordsController.PronounciationApiUri, text));
+                        buffer = this.PronounciationService.Get(word.Registered.Value).Sound;
+                    }
+                    else
+                    {
+                        using (var client = new WebClient())
+                        {
+                            try
+                            {
+                                buffer = await client.DownloadDataTaskAsync(string.Format(WordsController.PronounciationApiUri, word.Text));
+                            }
+                            catch (WebException exception)
+                            {
+                                InteractionService.Notify(new NotifyOptions(States.UnableToConnect, null));
+                            }
+                        }
+
+                        this.PronounciationService.Items.Add(new Pronounciation(word.Registered.Value, buffer));
+                        this.PronounciationService.Save();
                     }
 
-                    this.Pronounciations.Add(text, buffer);
-                }
-
-                if (buffer != null && buffer.Length > 0)
-                {
-                    this.SoundPlayer.Stop();
-                    this.SoundPlayer.Init(new Mp3FileReader(new MemoryStream(buffer)));
-                    this.SoundPlayer.Play();
+                    if (buffer != null && buffer.Length > 0)
+                    {
+                        this.SoundPlayer.Stop();
+                        this.SoundPlayer.Init(new Mp3FileReader(new MemoryStream(buffer)));
+                        this.SoundPlayer.Play();
+                    }
                 }
             }
         }

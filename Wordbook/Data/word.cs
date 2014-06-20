@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace Wordbook.Data
 {
-    public class Word
+    public class Word:BaseEntity
     {
         public Word()
         {
@@ -17,27 +17,10 @@ namespace Wordbook.Data
         public string Text { get; set; }
         public WordType Type { get; set; }
         public string Definition { get; set; }
-        public DateTime? Registered { get; set; }
 
         public override string ToString()
         {
             return this.Text;
-        }
-
-        public override int GetHashCode()
-        {
-            return this.Registered.GetHashCode();
-        }
-
-        public override bool Equals(object obj)
-        {
-            var word = obj as Word;
-            if (word != null)
-            {
-                return this.Registered == word.Registered;
-            }
-
-            return false;
         }
     }
 }

@@ -27,7 +27,7 @@
                  VerticalContentAlignment="Center"
                  controls:TextboxHelper.Watermark="Text"
                  controls:TextboxHelper.ButtonCommand="{Binding PronounceCommand}"
-                 controls:TextboxHelper.ButtonCommandParameter="{Binding WordText}">
+                 controls:TextboxHelper.ButtonCommandParameter="{Binding Word}">
             <TextBox.Style>
                 <Style TargetType="{x:Type TextBox}"
                        BasedOn="{StaticResource ButtonCommandMetroTextBox}">

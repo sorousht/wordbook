@@ -7,5 +7,7 @@ namespace Wordbook.Services
         WordRemoved,
         WordUpdated,
         WordsLoaded,
+        WordPronouncing,
+        UnableToConnect,
     }
 }

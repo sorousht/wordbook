@@ -98,6 +98,10 @@
     <Compile Include="Controllers\ControllerLocator.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\WordsController.cs" />
+    <Compile Include="Data\BaseEntity.cs" />
+    <Compile Include="Data\JsonListService.cs" />
+    <Compile Include="Data\Pronounciation.cs" />
+    <Compile Include="Data\PronounciationService.cs" />
     <Compile Include="Data\SettingService.cs" />
     <Compile Include="Data\Setting.cs" />
     <Compile Include="Data\WordType.cs" />

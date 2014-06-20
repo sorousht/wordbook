@@ -21,6 +21,7 @@ namespace Wordbook
         private static readonly string WordsLoaded = "{0} words was found.";
         private static readonly string AWordFound = "only one word was found.";
         private static readonly string NoWord = "no words!";
+        private static readonly string UnableToConnect = "unable to connect to Internet!";
         public MainWindow()
         {
             InitializeComponent();
@@ -56,6 +57,9 @@ namespace Wordbook
                                 this.StatusTextBlock.Text = string.Format(WordsLoaded, count);
                             }
 
+                            break;
+                        case States.UnableToConnect:
+                            this.StatusTextBlock.Text = UnableToConnect;
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -146,6 +150,9 @@ namespace Wordbook
             }
             else
             {
+                this.MainFlyout.Header = string.Empty;
+                this.MainFlyout.Content = null;
+
                 this.MainContentControl.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
             }
         }
